@@ -6,11 +6,11 @@
 
 git clone https://github.com/Pepperrs/red_jenkins.git
 
-Step 2: Changing into your root directory of Redmine (e.g. C:\Bitnami\redmine-3.0.0-0\apps\redmine\htdocs) and run the following command:
+**Step 2:** Changing into your root directory of Redmine (e.g. C:\Bitnami\redmine-3.0.0-0\apps\redmine\htdocs) and run the following command:
 
 rake redmine:plugins:migrate RAILS_ENV=production
 
-Step 3: Restart Redmine
+**Step 3:** Restart Redmine
 
-See also: http://www.redmine.org/projects/redmine/wiki/Plugins
+_See also: http://www.redmine.org/projects/redmine/wiki/Plugins_
 
