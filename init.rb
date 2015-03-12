@@ -1,3 +1,7 @@
+require 'redmine'
+require_dependency 'red_jenkins/hooks/hooks'
+
+
 Redmine::Plugin.register :red_jenkins do
   name 'Red Jenkins plugin'
   author 'Author name'
@@ -6,3 +10,4 @@ Redmine::Plugin.register :red_jenkins do
   url 'http://www.isp.uni-luebeck.de'
   author_url 'https://github.com/Pepperrs/red_jenkins'
 end
+
