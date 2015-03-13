@@ -73,8 +73,6 @@ class JenkinshandlerController < ApplicationController
 			
 			@test_result_parsed = []
 			@test_result_parsed.replace(tmp_parse)
-			
-			
 		
 		end
 
@@ -93,20 +91,31 @@ class JenkinshandlerController < ApplicationController
 		
 	private	
 		def compare_test_results
-			testcases = Testcase.all
+			testcases = Testcase.where(:test_type => "AUTOMATIC")
 			
+			updated_testcases_db = []
+			updated_testcases_jenkins = []
 			@test_result_parsed.each do |r|
 				testcases.each do |t|
-					if r["name"] == t["name"] && r["path"] == t["path"]
+				if t != nil && r != nil
+					if t["name"] == r["name"] && t["path"]==r["className"] 				
+						
 						self.update(r,t[:id])
-						@test_result_parsed.delete(r)
-						testcases.delete(t)
+						
+						updated_testcases_db.push(t)
+						updated_testcases_jenkins.push(r)
 					end
 				end
-			end
+				end
+			end	
+			testcases = testcases - updated_testcases_db
+			@test_result_parsed = @test_result_parsed - updated_testcases_jenkins
+			@test_result_parsed.compact
 			
-			@test_result_parsed.each do |r|
-				self.create(r)
+			if not @test_result_parsed.nil?
+				@test_result_parsed.each do |r|
+					self.create(r)
+				end
 			end
 			
 			testcases.each do |t|
