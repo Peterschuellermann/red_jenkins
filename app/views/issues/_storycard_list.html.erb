@@ -10,6 +10,7 @@
                               :title => "#{l(:button_check_all)}/#{l(:button_uncheck_all)}" %>
       </th>
 		<%= column_header(query.inline_columns[0]) %>
+				<%= column_header(query.inline_columns[1]) %>
         <%= column_header(query.inline_columns[4]) %>
        <th>
 		   Corresponding testcaseprogress
@@ -35,6 +36,7 @@
 
     <td class="checkbox hide-when-print"><%= check_box_tag("ids[]", issue.id, false, :id => nil) %></td>
 	<td><%= column_content(query.inline_columns[0],issue)%></td>
+	<td><%= column_content(query.inline_columns[1],issue)%></td>
 	<td><%= column_content(query.inline_columns[4],issue)%></td>
   </tr>
   <% @query.block_columns.each do |column|
