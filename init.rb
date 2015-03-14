@@ -9,5 +9,11 @@ Redmine::Plugin.register :red_jenkins do
   version '0.0.1'
   url 'http://www.isp.uni-luebeck.de'
   author_url 'https://github.com/Pepperrs/red_jenkins'
-end
 
+  permission :testcases, { :testcases => [:index]}, :public => true
+  menu :project_menu, :testcases,
+    { :controller => 'testcases', :action => 'index' },
+    :caption => 'Testcases',
+    :after => :new_issue,
+    :param => :project_id
+end

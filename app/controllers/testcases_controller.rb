@@ -1,4 +1,5 @@
 class TestcasesController < ApplicationController
+<<<<<<< HEAD
  	def index
 	@testcases = Testcase.all
 	end
@@ -54,4 +55,5 @@ class TestcasesController < ApplicationController
 		def testcase_params
 			params.require(:testcase).permit(:name, :description, :path)
 		end
+
 end
