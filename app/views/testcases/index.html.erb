@@ -17,11 +17,28 @@ content_for :header_tags do %>
 def add(map, path_array, t)
 	# If path_array is empty, then the testcase shall be added to the map
     if path_array.length == 0
-        map[t.name] = t
+        test = {}
+        test[:name] = t.name
+        test[:type] = "method"
+        test[:content] = t
+        map[t.name] = test
+  # If the hash has already a key, then the content of the package is added to the map
+    elsif map.has_key?(path_array[0])
+        pack = map[path_array[0]]
+        # TODO: Update progress of the current package
+        add(pack[:content], path_array.drop(1), t)
+  # Else add the content to the map
     else
-    	# Otherwise, do recursion
-  	    map[path_array[0]] = {} unless map.has_key?(path_array[0])
-  	    add(map[path_array[0]], path_array.drop(1), t)
+        pack = {}
+        pack[:name] = path_array[0]
+        if path_array.length >= 2
+          pack[:type] = "package"
+        else 
+          pack[:type] = "class"
+        end
+        pack[:content] = {}
+        map[path_array[0]] = pack
+        add(pack[:content], path_array.drop(1), t)
     end
 end
 %>
@@ -30,6 +47,13 @@ end
 
 Here you can see all the test cases of the project:
 
+<script type="text/javascript">
+// After the document is initialized 
+$(document).ready(function() {
+  $.jstree.defaults.core.themes.variant = "large";
+  $('#html1').jstree();
+})
+</script>
 <div class="box tabular" id="html1">
 <%
 # This method outputs a tree using ul-li-elements which should be wrapped
@@ -37,8 +61,16 @@ Here you can see all the test cases of the project:
 def listing(map)
     %><ul><%
     map.each do |k, v|
-        %><li class="jstree-open"><%= k %> <br /><%
-        listing(v) if v.is_a?(::Hash)
+        if v[:type] == "method"
+            %> <li data-jstree='{"icon":"glyphicon glyphicon-leaf"}'> <%
+        else 
+          %> <li data-jstree='{"opened":true}'> <%
+        end
+        %>
+        <%= v[:name] %> 
+        <%= v[:type] %> <br />
+
+        <% listing(v[:content]) if v[:content].is_a?(::Hash)
         %></li><%
     end
     %></ul><%
@@ -73,10 +105,4 @@ listing(bla)
 <br />
 <% end %>
 
-<script type="text/javascript">
-// After the document is initialized 
-$(document).ready(function() {
-	$.jstree.defaults.core.themes.variant = "large";
-	$('#html1').jstree();
-})
-</script>
+
