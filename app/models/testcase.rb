@@ -7,4 +7,6 @@ class Testcase < ActiveRecord::Base
 							
 	attr_accessible :name, :description, :time_last_run, 
 					:path, :status, :test_type
+					
+	has_many :issues, through: :testcaseissuerelations
 end
