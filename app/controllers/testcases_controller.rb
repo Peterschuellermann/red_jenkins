@@ -1,5 +1,4 @@
 class TestcasesController < ApplicationController
-<<<<<<< HEAD
  	def index
 	@testcases = Testcase.all
 	end
@@ -19,8 +18,8 @@ class TestcasesController < ApplicationController
 	def create
 		testcase_input = testcase_params
 		testcase_input["time_last_run"] = DateTime.now
-		testcase_input["state"] = "PASSED"
-		testcase_input["test_type"] = 1
+		testcase_input["state"] = "UNKNOWN"
+		testcase_input["test_type"] = "MANUAL"
 		@testcase = Testcase.new(testcase_input)
  
 		if @testcase.save
@@ -34,8 +33,7 @@ class TestcasesController < ApplicationController
 		@testcase = Testcase.find(params[:id])
 		testcase_input = testcase_params
 		testcase_input["time_last_run"] = DateTime.now
-		testcase_input["state"] = "PASSED"
-		testcase_input["test_type"] = 1
+		testcase_input["test_type"] = "MANUAL"
  
 		if @testcase.update(testcase_input)
 			redirect_to testcases_path
