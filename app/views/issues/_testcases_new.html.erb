@@ -7,21 +7,22 @@
     <fieldset class="box">
         <legend>
 
-          Testfallzuweisung
+          <b> Testcaseassignment </b>
         </legend>
+        
         <table class="query-columns">
             <tbody>
             <tr>
             	<td>
-                           <b> Alle Testfälle</b>
+                           <b> all testcases</b>
             	</td>
             	<td></td>
-            	<td>       <b>zugewiesene Testfälle</b>
+            	<td>       <b>assigned testcases</b>
             	</td>
             </tr>
                 <tr>
                     <td style="padding-left:0">
-                        <select id="available_columns" ondblclick="moveOptions(this.form.available_columns, this.form.selected_columns);" style="width:150px" size="10" multiple="multiple" name="available_columns[]">
+                        <select id="available_columns" ondblclick="moveOptions(this.form.available_columns, this.form.selected_columns);" style="width:500px; height:350px" size="10" multiple="multiple" name="available_columns[]">
 
         <option value="updated_on">
 
@@ -42,7 +43,7 @@
 
 </td>
 <td>
-    <select id="selected_columns" ondblclick="moveOptions(this.form.selected_columns, this.form.available_columns);" style="width:150px" size="10" multiple="multiple" name="settings[issue_list_default_columns][]">
+    <select id="selected_columns" ondblclick="moveOptions(this.form.selected_columns, this.form.available_columns);" style="width:500px; height:350px" size="10" multiple="multiple" name="settings[issue_list_default_columns][]">
 
         
     </select>
