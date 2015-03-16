@@ -19,6 +19,7 @@ def add(map, path_array, t)
     if path_array.length == 0
         test = {}
         test[:name] = t.name
+        test[:status] = t.status.downcase
         test[:type] = "method"
         test[:content] = t
         map[t.name] = test
@@ -45,6 +46,12 @@ end
 
 <h2>Tests</h2>
 
+<% # Button to create a new testcase %>
+<%= link_to "Create new testcase", new_project_document_path(@project), :class => 'icon icon-add',
+      :onclick => 'showAndScrollTo("add-document", "document_title"); return false;' if User.current.allowed_to?(:add_documents, @project) 
+%>
+<br />
+<br />
 Here you can see all the test cases of the project:
 
 <script type="text/javascript">
@@ -64,17 +71,25 @@ def listing(map)
     %><ul><%
     map.each do |k, v|
         if v[:type] == "method"
-            %> <li data-jstree='{"icon":"jstree-file"}'> <%
+            if v[:status] == "failed"
+               %> <li data-jstree='{"icon":"jstree-file"}'><span style="background-color: #F5A9A9;"> <%
+            elsif v[:status] == "passed"
+               %> <li data-jstree='{"icon":"jstree-file"}'><span style="background-color: #BCF5A9;"> <%
+            # If status is "not implemented"
+            else
+               %> <li data-jstree='{"icon":"jstree-file"}'><span style="background-color: #A9D0F5;"> <%
+            end
         else
         # If "opened" is true, the whole tree is opened when accessing the page
         # If "opened" is false, the tree is closed when accessing the page
           %> <li data-jstree='{"opened":false}'> <%
         end
         %>
-        <%= v[:name] %> 
-        <%= v[:type] %> <br />
+        <%= v[:name] %>  
+        <br />
 
-        <% listing(v[:content]) if v[:content].is_a?(::Hash)
+        <% 
+        listing(v[:content]) if v[:content].is_a?(::Hash)
         %></li><%
     end
     %></ul><%
@@ -84,12 +99,6 @@ end
 storedTestcase = {}
 # For each testcase t
 @testcases.each do |t|
-    if t.status.downcase == "failed"
-     %> <span style="background-color: red;"> <%
-    elsif t.status.downcase == "passed"
-     %> <span style="background-color: green;"> <%
-    else
-     %> <span style="background-color: blue;"> <%
 	# add t to the tree
     add storedTestcase, t.path.split("."), t 
 end
@@ -100,20 +109,7 @@ listing(storedTestcase)
 </div>
 <%
 
-# This is a temporary output for debugging
-=begin
-@testcases.each do |t|
+
 %>
-<% if t.status.downcase == "failed" %>
-<span style="background-color: red;">
-<% elsif t.status.downcase == "passed" %>
-<span style="background-color: green;">
-<% else %>
-<span style="background-color: blue;">
-<% end %>
-<%= t.path %>
-</span>
-<br />
-<% end %>
-=end
+
 
