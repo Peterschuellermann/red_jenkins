@@ -1,5 +1,6 @@
 class TestcasesController < ApplicationController
  	def index
+  @project = Project.find(params[:project_id])
 	@testcases = Testcase.all
 	end
 	
