@@ -1,4 +1,4 @@
-<div id="tab-content-issues" class="tab-content" style="">
+<div id="tab-content-issues" class="tab-content" style="float:left; margin-left:180px;">
 
     <form method="post" accept-charset="UTF-8" action="/redmine/settings/edit?tab=issues">
 
@@ -33,13 +33,11 @@
     </select>
 
 </td>
-<td class="buttons">
-
-    <input type="button" onclick="moveOptions(this.form.available_columns, this.form.selected_columns);" value="→"></input>
-
+<td class="buttons" style="align:left; width:60px;">
+    <input type="button" onclick="moveOptions(this.form.available_columns, this.form.selected_columns);" value="→" style="float:left;"></input>
 <br />
-
-<input type="button" onclick="moveOptions(this.form.selected_columns, this.form.available_columns);" value="←"></input>
+<br></br>
+<input type="button" onclick="moveOptions(this.form.selected_columns, this.form.available_columns);" value="←" style="float:left;"></input>
 
 </td>
 <td>
