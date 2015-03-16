@@ -29,6 +29,7 @@ def add(map, path_array, t)
         # TODO: Update progress of the current package
         add(pack[:content], path_array.drop(1), t)
   # Else the content is added to the map
+  # Else add the content to the map
     else
         pack = {}
         pack[:name] = path_array[0]
@@ -58,9 +59,7 @@ Here you can see all the test cases of the project:
 // After the document is initialized 
 $(document).ready(function() {
   $.jstree.defaults.core.themes.variant = "large";
-  $('#html1').jstree({
-
-  });
+  $('#html1').jstree();
 })
 </script>
 <div class="box tabular" id="html1">
