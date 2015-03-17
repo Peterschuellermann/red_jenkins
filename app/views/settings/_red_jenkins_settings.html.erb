@@ -1,0 +1,206 @@
+<!-- settings view for the red_jenkins plugin -->
+
+<table>
+  <tbody>
+    <tr>
+      <th>Server URL</th>
+      <td>
+        <input type="text" id="settings_red_jenkins_server_url" 
+                           value="<%= settings['red_jenkins_server_url'] %>" 
+                           name="settings[red_jenkins_server_url]" >
+      </td><td>                    
+                           the full URL address of the Jenkins CI server (http/https). This can include username/password. :username/:password options will override any user/pass value in the URL
+
+      </td>
+    </tr>
+    
+    <tr>
+      <th>Server IP</th>
+      <td>
+        <input type="text" id="settings_red_jenkins_server_ip" 
+                           value="<%= settings['red_jenkins_server_ip'] %>" 
+                           name="settings[red_jenkins_server_ip]" >
+      </td><td>
+                           the IP address of the Jenkins CI server
+      </td>
+    </tr>
+    <tr>
+      <th>Server port</th>
+      <td>
+        <input type="text" id="settings_red_jenkins_server_port" 
+                           value="<%= settings['red_jenkins_server_port'] %>" 
+                           name="settings[red_jenkins_server_port]" >
+         </td><td>
+                           the port on which the Jenkins listens
+
+      </td>
+    </tr>
+    
+    <tr>
+      <th>Proxy IP</th>
+      <td>
+        <input type="text" id="settings_red_jenkins_proxy_ip" 
+                           value="<%= settings['red_jenkins_proxy_ip'] %>" 
+                           name="settings[red_jenkins_proxy_ip]" >
+	</td><td>
+						the proxy ip
+      </td>
+    </tr>
+    <tr>
+      <th>Proxy port</th>
+      <td>
+        <input type="text" id="settings_red_jenkins_proxy_port" 
+                           value="<%= settings['red_jenkins_proxy_port'] %>" 
+                           name="settings[red_jenkins_proxy_port]" >
+         </td><td>
+                           the proxy port
+
+      </td>
+    </tr>
+    
+    <tr>
+      <th>Jenkins path</th>
+      <td>
+        <input type="text" id="settings_red_jenkins_jenkins_path" 
+                           value="<%= settings['red_jenkins_jenkins_path'] %>" 
+                           name="settings[red_jenkins_jenkins_path]" >
+        </td><td>
+                           the optional context path for Jenkins :ssl (Boolean) — default: false —
+                           indicates if Jenkins is accessible over HTTPS
+
+      </td>
+    </tr>
+    
+    <tr>
+      <th>Username</th>
+      <td>
+        <input type="text" id="settings_red_jenkins_unsername" 
+                           value="<%= settings['red_jenkins_username'] %>" 
+                           name="settings[red_jenkins_username]" >
+                 </td><td>
+                           the username used for connecting to the server (optional)
+
+      </td>
+    </tr>
+    
+    <tr>
+      <th>Password</th>
+      <td>
+        <input type="password" id="settings_red_jenkins_password" 
+                           value="<%= settings['red_jenkins_password'] %>" 
+                           name="settings[red_jenkins_password]" >
+                          </td><td>
+                           the password or API Key for connecting to the CI server (optional)
+
+      </td>
+    </tr>
+    
+    <tr>
+      <th>Password base64</th>
+      <td>
+        <input type="text" id="settings_red_jenkins_password_base64" 
+                           value="<%= settings['red_jenkins_password_base64'] %>" 
+                           name="settings[red_jenkins_password_base64]" >
+                           </td><td>
+                           the password with base64 encoded format for connecting to the CI server (optional)
+
+      </td>
+    </tr>
+    
+    <tr>
+      <th>Log location</th>
+      <td>
+        <input type="text" id="settings_red_jenkins_log_location" 
+                           value="<%= settings['red_jenkins_log_location'] %>" 
+                           name="settings[red_jenkins_log_location]" >
+                           </td><td>
+                           the location for the log file
+                           
+      </td>
+    </tr>
+    
+    <tr>
+      <th>Log level</th>
+      <td>
+        <input type="text" id="settings_red_jenkins_log_level" 
+                           value="<%= settings['red_jenkins_log_level'].to_s %>" 
+                           name="settings[red_jenkins_log_level]" >
+                           </td><td>
+                           The level for messages to be logged. Should be one of: Logger::DEBUG (0), Logger::INFO (1), Logger::WARN (2), Logger::ERROR (2), Logger::FATAL (3)
+
+      </td>
+    </tr>
+    
+    <tr>
+      <th>Timeout</th>
+      <td>
+        <input type="text" id="settings_red_jenkins_timeout" 
+                           value="<%= settings['red_jenkins_timeout'].to_s %>" 
+                           name="settings[red_jenkins_timeout]" >
+                           </td><td>
+                           This argument sets the timeout for operations that take longer (in seconds)
+      </td>
+    </tr>
+    
+    <tr>
+      <th>http_open_timeout</th>
+      <td>
+        <input type="text" id="settings_red_jenkins_http_open_timeout" 
+                           value="<%= settings['red_jenkins_http_open_timeout'].to_s %>" 
+                           name="settings[red_jenkins_http_open_timeout]" >
+      </td>
+    </tr>
+    
+        <tr>
+      <th>http_read_timeout</th>
+      <td>
+        <input type="text" id="settings_red_jenkins_http_read_timeout" 
+                           value="<%= settings['red_jenkins_http_read_timeout'].to_s %>" 
+                           name="settings[red_jenkins_http_read_timeout]" >
+      </td>
+    </tr> 
+    
+        <tr>
+      <th>ssl</th>
+      <td>
+        <%= check_box_tag "settings[red_jenkins_ssl]", true, @settings[:red_jenkins_ssl] %>
+        </td><td>
+        indicates if Jenkins is accessible over HTTPS
+      </td>
+    </tr>
+    
+        <tr>
+      <th>follow_redirects</th>
+      <td>
+        <%= check_box_tag "settings[red_jenkins_follow_redirects]", true, @settings[:red_jenkins_follow_redirects] %>
+        </td><td>
+        this argument causes the client to follow a redirect (jenkins can return a 30x when starting a build)
+
+      </td>
+    </tr>
+    
+        <tr>
+      <th>identity_file</th>
+      <td>
+        <input type="text" id="settings_red_jenkins_identity_file" 
+                           value="<%= settings['red_jenkins_identity_file'] %>" 
+                           name="settings[red_jenkins_identity_file]" >
+                 </td><td>
+                           the priviate key file for Jenkins CLI authentication, it is used only for executing CLI commands. Also remember to upload the public key to <Server IP>:<Server Port>/user/<Username>/configure
+
+      </td>
+    </tr>
+    
+        <tr>
+      <th>cookies</th>
+      <td>
+        <input type="text" id="settings_red_jenkins_cookies" 
+                           value="<%= settings['red_jenkins_cookies'] %>" 
+                           name="settings[red_jenkins_cookies]" >
+                          </td><td>
+                           Cookies to be sent with all requests in the format: name=value; name2=value2
+      </td>
+    </tr>
+    
+  </tbody>
+</table>

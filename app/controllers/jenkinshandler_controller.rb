@@ -2,35 +2,117 @@ class JenkinshandlerController < ApplicationController
   require 'jenkins_api_client'
 	
 	
-	# Inilializes the class with hardcoded jenkins settings
-	# If you want to connect to a specific jenkins server change 
-	# your settings here. Unused fields must be nil.
-	# 
-	# For now this is work in progress. The goal is to be able to set 
-	# these settings within the plugins settings page. 
+	# Initializes the class using the values stored in the plugins settings.
+	# Checks if the input is an empty string and sets the value to nil
 	def initialize
-		@jenkins_settings =  {
-		  :server_url => nil,
-		  :server_ip => "52.16.157.73",
-		  :server_port => "80",
-		  :proxy_ip => nil,
-		  :proxy_port => nil,
-		  :jenkins_path => " /jenkins/",
-		  :username=> "user",
-		  :password => "IXutnKRARd1x",
-		  :password_base64 => nil,
-		  :log_location => nil,
-		  :log_level => nil,
-		  :timeout => nil,
-		  :http_open_timeout => nil,
-		  :http_read_timeout => nil,
-		  :ssl => nil,
-		  :follow_redirects => nil,
-		  :identity_file => nil,
-		  :cookies => nil
-		}
+		@jenkins_settings =  {}
 		
+
+	      if Setting.plugin_red_jenkins['red_jenkins_server_url'].to_s == ""
+	      @jenkins_settings[:server_url] = nil
+	      else
+		  @jenkins_settings[:server_url] = Setting.plugin_red_jenkins['red_jenkins_server_url'].to_s
+		  end
+		  
+		  if Setting.plugin_red_jenkins['red_jenkins_server_ip'].to_s == ""
+		  @jenkins_settings[:server_ip] = nil
+		  else
+		  @jenkins_settings[:server_ip] = Setting.plugin_red_jenkins['red_jenkins_server_ip'].to_s
+		  end
+		  
+		  if Setting.plugin_red_jenkins['red_jenkins_server_port'].to_s ==""
+		  @jenkins_settings[:server_port] = nil
+		  else
+		  @jenkins_settings[:server_port] = Setting.plugin_red_jenkins['red_jenkins_server_port'].to_s
+		  end
+		  
+		  if Setting.plugin_red_jenkins['red_jenkins_proxy_ip'].to_s == ""
+		  @jenkins_settings[:proxy_ip] = nil
+		  else
+		  @jenkins_settings[:proxy_ip] = Setting.plugin_red_jenkins['red_jenkins_proxy_ip'].to_s
+		  end
+		  
+		  if Setting.plugin_red_jenkins['red_jenkins_proxy_port'].to_s == ""
+		  @jenkins_settings[:proxy_port] = nil
+		  else
+		  @jenkins_settings[:proxy_port] = Setting.plugin_red_jenkins['red_jenkins_proxy_port'].to_s
+		  end
+		  
+		  if Setting.plugin_red_jenkins['red_jenkins_jenkins_path'].to_s == ""
+		  @jenkins_settings[:jenkins_path] = "/"
+		  else
+		  @jenkins_settings[:jenkins_path] = Setting.plugin_red_jenkins['red_jenkins_jenkins_path'].to_s
+		  end
+		  
+		  if Setting.plugin_red_jenkins['red_jenkins_username'].to_s == ""
+		  @jenkins_settings[:username] = nil
+		  else
+		  @jenkins_settings[:username] = Setting.plugin_red_jenkins['red_jenkins_username'].to_s
+		  end
+		  
+		  if Setting.plugin_red_jenkins['red_jenkins_password'].to_s == ""
+		  @jenkins_settings[:password] = nil
+		  else
+		  @jenkins_settings[:password] = Setting.plugin_red_jenkins['red_jenkins_password'].to_s
+		  end
+		  
+		  if Setting.plugin_red_jenkins['red_jenkins_password_base64'].to_s == ""
+		  @jenkins_settings[:password_base64] = nil
+		  else
+		  @jenkins_settings[:password_base64] = Setting.plugin_red_jenkins['red_jenkins_password_base64'].to_s
+		  end
+		  
+		  if Setting.plugin_red_jenkins['red_jenkins_log_location'].to_s == ""
+		  @jenkins_settings[:log_location] = nil
+		  else
+		  @jenkins_settings[:log_location] = Setting.plugin_red_jenkins['red_jenkins_log_location'].to_s
+		  end
+		  
+		  if Setting.plugin_red_jenkins['red_jenkins_log_level'].to_s == ""
+		  @jenkins_settings[:log_level] = 1
+		  else
+		  @jenkins_settings[:log_level] = Setting.plugin_red_jenkins['red_jenkins_log_level'].to_i
+		  end
+		  
+		  if Setting.plugin_red_jenkins['red_jenkins_timeout'].to_s == ""
+		  @jenkins_settings[:timeout] = 120
+		  else 
+		  @jenkins_settings[:timeout] = Setting.plugin_red_jenkins['red_jenkins_timeout'].to_i
+		  end
+		  
+		  if Setting.plugin_red_jenkins['red_jenkins_http_open_timeout'].to_s == ""
+		  @jenkins_settings[:http_open_timeout] == 120
+		  else
+		  @jenkins_settings[:http_open_timeout] = Setting.plugin_red_jenkins['red_jenkins_http_open_timeout'].to_i
+		  end
+		  
+		  if Setting.plugin_red_jenkins['red_jenkins_http_read_timeout'].to_s == ""
+		  @jenkins_settings[:http_read_timeout] = 120
+		  else
+		  @jenkins_settings[:http_read_timeout] = Setting.plugin_red_jenkins['red_jenkins_http_read_timeout'].to_i
+		  end
+		  
+		  @jenkins_settings[:ssl] = Setting.plugin_red_jenkins['red_jenkins_ssl']
+		  
+		  @jenkins_settings[:follow_redirects] = Setting.plugin_red_jenkins['red_jenkins_follow_redirects']
+		
+		  
+		  if Setting.plugin_red_jenkins['red_jenkins_identity_files'].to_s == ""
+		  @jenkins_settings[:identity_file] = nil
+		  else
+		  @jenkins_settings[:identity_file] = Setting.plugin_red_jenkins['red_jenkins_identity_files'].to_s
+		  end
+		  
+		  if Setting.plugin_red_jenkins['red_jenkins_cookies'].to_s == ""
+		  @jenkins_settings[:cookies] = nil
+		  else
+		  @jenkins_settings[:cookies] = Setting.plugin_red_jenkins['red_jenkins_cookies'].to_s
+		  end
+		  
 		@jenkins_job = "Test"
+		
+
+		
 	end
 
 	# Method that is called to start the update progress. Only function
@@ -187,3 +269,23 @@ class JenkinshandlerController < ApplicationController
 
 
 end
+
+		#@jenkins_settings =  {
+		  #:server_url => Setting.plugin_redmine_red_jenkins['red_jenkins_server_url'],
+		  #:server_ip => "52.16.157.73",
+		  #:server_port => "80",
+		  #:proxy_ip => nil,
+		  #:proxy_port => nil,
+		  #:jenkins_path => " /jenkins/",
+		  #:username=> "user",
+		  #:password => "IXutnKRARd1x",
+		  #:password_base64 => nil,
+		  #:log_location => nil,
+		  #:log_level => nil,
+		  #:timeout => nil,
+		  #:http_open_timeout => nil,
+		  #:http_read_timeout => nil,
+		  #:ssl => nil,
+		  #:follow_redirects => nil,
+		  #:identity_file => nil,
+		  #:cookies => nil
