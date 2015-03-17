@@ -1,1 +1,64 @@
-<h1 style="color: red">new</h1>
+<div style="float:left; width:180px; text-align:right; ">
+ <b> Testcaseassignment &nbsp;</b>
+</div>
+<div id="tab-content-issues" class="tab-content" style="float:left; margin-left:0px;">
+
+    <form method="post" accept-charset="UTF-8" action="/redmine/settings/edit?tab=issues">
+
+    <input type="hidden" value="✓" name="utf8"></input>
+    <input type="hidden" value="z52Uy2Kcc7S1cP+fy+Kc+MCf5YI8qjKDxCQZ+VAXo98FjWClaIMjIUVzRSazPa1mKRZAYHemzEAYOtdBJRFRCg==" name="authenticity_token"></input>
+    <fieldset class="box">
+        <legend>
+
+         
+        </legend>
+        
+        <table class="query-columns">
+            <tbody>
+            <tr>
+            	<td>
+                           <b> all testcases</b>
+            	</td>
+            	<td></td>
+            	<td>       <b>assigned testcases</b>
+            	</td>
+            </tr>
+                <tr>
+                    <td style="padding-left:0">
+                        <select id="available_columns" ondblclick="moveOptions(this.form.available_columns, this.form.selected_columns);" style="width:500px; height:350px" size="10" multiple="multiple" name="available_columns[]">
+
+        <option value="updated_on">
+
+            Updated
+
+        </option>
+
+    </select>
+
+</td>
+<td class="buttons" style="align:left; width:60px;">
+    <input type="button" onclick="moveOptions(this.form.available_columns, this.form.selected_columns);" value="→" style="float:left;"></input>
+<br />
+<br></br>
+<input type="button" onclick="moveOptions(this.form.selected_columns, this.form.available_columns);" value="←" style="float:left;"></input>
+
+</td>
+<td>
+    <select id="selected_columns" ondblclick="moveOptions(this.form.selected_columns, this.form.available_columns);" style="width:500px; height:350px" size="10" multiple="multiple" name="settings[issue_list_default_columns][]">
+
+        
+    </select>
+
+</td>
+
+            </tr>
+        </tbody>
+    </table>
+    <script></script>
+
+</fieldset>
+<input type="submit" value="Save" name="commit"></input>
+
+    </form>
+
+</div>
