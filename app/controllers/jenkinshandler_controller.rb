@@ -2,12 +2,8 @@ class JenkinshandlerController < ApplicationController
   require 'jenkins_api_client'
 	
 	
-	# Inilializes the class with hardcoded jenkins settings
-	# If you want to connect to a specific jenkins server change 
-	# your settings here. Unused fields must be nil.
-	# 
-	# For now this is work in progress. The goal is to be able to set 
-	# these settings within the plugins settings page. 
+	# Initializes the class using the values stored in the plugins settings.
+	# Checks if the input is an empty string and sets the value to nil
 	def initialize
 		@jenkins_settings =  {}
 		
@@ -75,7 +71,7 @@ class JenkinshandlerController < ApplicationController
 		  if Setting.plugin_red_jenkins['red_jenkins_log_level'].to_s == ""
 		  @jenkins_settings[:log_level] = 1
 		  else
-		  @jenkins_settings[:log_level] = Setting.plugin_red_jenkins['red_jenkins_log_level'].to_s
+		  @jenkins_settings[:log_level] = Setting.plugin_red_jenkins['red_jenkins_log_level'].to_i
 		  end
 		  
 		  if Setting.plugin_red_jenkins['red_jenkins_timeout'].to_s == ""
@@ -96,17 +92,10 @@ class JenkinshandlerController < ApplicationController
 		  @jenkins_settings[:http_read_timeout] = Setting.plugin_red_jenkins['red_jenkins_http_read_timeout'].to_i
 		  end
 		  
-		  if Setting.plugin_red_jenkins['red_jenkins_ssl'].to_s == ""
-		  @jenkins_settings[:ssl] = false
-		  else
 		  @jenkins_settings[:ssl] = Setting.plugin_red_jenkins['red_jenkins_ssl']
-		  end
 		  
-		  if Setting.plugin_red_jenkins['red_jenkins_follow_redirects'].to_s ==""
-		  @jenkins_settings[:follow_redirects] = false
-		  else
 		  @jenkins_settings[:follow_redirects] = Setting.plugin_red_jenkins['red_jenkins_follow_redirects']
-		  end
+		
 		  
 		  if Setting.plugin_red_jenkins['red_jenkins_identity_files'].to_s == ""
 		  @jenkins_settings[:identity_file] = nil
@@ -120,31 +109,9 @@ class JenkinshandlerController < ApplicationController
 		  @jenkins_settings[:cookies] = Setting.plugin_red_jenkins['red_jenkins_cookies'].to_s
 		  end
 		  
-		  #:server_url => nil,
-		  #:server_ip => Setting.plugin_red_jenkins['red_jenkins_server_ip'],
-		  #:server_port => Setting.plugin_red_jenkins['red_jenkins_server_port'],
-		  #:proxy_ip => nil,
-		  #:proxy_port => nil,
-		  #:jenkins_path => Setting.plugin_red_jenkins['red_jenkins_jenkins_path'].to_s,
-		  #:username=> Setting.plugin_red_jenkins['red_jenkins_username'],
-		  #:password => Setting.plugin_red_jenkins['red_jenkins_password'],
-		  #:password_base64 => nil,
-		  #:log_location => nil,
-		  #:log_level => nil,
-		  #:timeout => nil,
-		  #:http_open_timeout => nil,
-		  #:http_read_timeout => nil,
-		  #:ssl => nil,
-		  #:follow_redirects => nil,
-		  #:identity_file => nil,
-		  #:cookies => nil
-
-		
 		@jenkins_job = "Test"
 		
-		f = File.open("HALLO_HIER_BIN_ICH","w+")
-		f.write(@jenkins_settings)
-		f.close
+
 		
 	end
 
