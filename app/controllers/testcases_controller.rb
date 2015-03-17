@@ -1,7 +1,24 @@
 class TestcasesController < ApplicationController
+
+    include TestcasesHelper
+
     def index
         @project = Project.find(params[:project_id])
         @testcases = Testcase.all
+
+        # This variable is used to build the testcase tree
+        @testcase_tree = {}
+        # For each testcase t
+        @testcases.each do |t|
+            # add t to the tree
+            add @testcase_tree, t.path.split("."), t
+        end
+
+        respond_to do |format|
+            format.html
+            format.json { render json: @testcase_tree }
+        end
+
     end
 
     def show

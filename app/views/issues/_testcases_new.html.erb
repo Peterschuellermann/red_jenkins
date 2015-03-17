@@ -1,64 +1,196 @@
+<%
+# The following code is for adding the jstree library.
+# It adds both the javascript library and the corresponding stylesheet.
+# You need to put those files into assets into the plugin directy.
+
+content_for :header_tags do
+%>
+  <%= javascript_include_tag 'jstree', :plugin => 'red_jenkins' %>
+  <%= stylesheet_link_tag 'default/style.min', :plugin => 'red_jenkins' %>
+<%
+end
+
+# This method outputs a tree using ul-li-elements which should be wrapped
+# by a div that can be transformed by jstree
+def listing(map)
+    %><ul><%
+    map.each do |k, v|
+        if v[:type] == "method"
+            if v[:status] == "failed"
+               %> <li data-jstree='{"icon":"jstree-file"}'><span style="background-color: #F5A9A9;"> <%
+            elsif v[:status] == "passed"
+               %> <li data-jstree='{"icon":"jstree-file"}'><span style="background-color: #BCF5A9;"> <%
+            # If status is "not implemented"
+            else
+               %> <li data-jstree='{"icon":"jstree-file"}'><span style="background-color: #A9D0F5;"> <%
+            end
+        else
+        # If "opened" is true, the whole tree is opened when accessing the page
+        # If "opened" is false, the tree is closed when accessing the page
+          %> <li data-jstree='{"opened":false}'> <%
+        end
+        %>
+        <a href="http://localhost/redmine"><%= v[:name] %> </a> 
+        <br />
+
+        <% 
+        listing(v[:content]) if v[:content].is_a?(::Hash)
+        %></li><%
+    end
+    %></ul><%
+end
+
+# This variable is used to build the testcase tree
+storedTestcase = {}
+# For each testcase t
+@testcases = Testcase.all
+#@testcases.each do |t|
+    # add t to the tree
+#    add storedTestcase, t.path.split("."), t 
+#end
+%>
+
 <div style="float:left; width:180px; text-align:right; ">
- <b> Testcaseassignment &nbsp;</b>
+    <b>Testcase assignment &nbsp;</b>
 </div>
 <div id="tab-content-issues" class="tab-content" style="float:left; margin-left:0px;">
-
     <form method="post" accept-charset="UTF-8" action="/redmine/settings/edit?tab=issues">
-
-    <input type="hidden" value="✓" name="utf8"></input>
-    <input type="hidden" value="z52Uy2Kcc7S1cP+fy+Kc+MCf5YI8qjKDxCQZ+VAXo98FjWClaIMjIUVzRSazPa1mKRZAYHemzEAYOtdBJRFRCg==" name="authenticity_token"></input>
-    <fieldset class="box">
-        <legend>
-
-         
-        </legend>
-        
-        <table class="query-columns">
-            <tbody>
-            <tr>
-            	<td>
-                           <b> all testcases</b>
-            	</td>
-            	<td></td>
-            	<td>       <b>assigned testcases</b>
-            	</td>
-            </tr>
-                <tr>
-                    <td style="padding-left:0">
-                        <select id="available_columns" ondblclick="moveOptions(this.form.available_columns, this.form.selected_columns);" style="width:500px; height:350px" size="10" multiple="multiple" name="available_columns[]">
-
-        <option value="updated_on">
-
-            Updated
-
-        </option>
-
-    </select>
-
-</td>
-<td class="buttons" style="align:left; width:60px;">
-    <input type="button" onclick="moveOptions(this.form.available_columns, this.form.selected_columns);" value="→" style="float:left;"></input>
-<br />
-<br></br>
-<input type="button" onclick="moveOptions(this.form.selected_columns, this.form.available_columns);" value="←" style="float:left;"></input>
-
-</td>
-<td>
-    <select id="selected_columns" ondblclick="moveOptions(this.form.selected_columns, this.form.available_columns);" style="width:500px; height:350px" size="10" multiple="multiple" name="settings[issue_list_default_columns][]">
-
-        
-    </select>
-
-</td>
-
-            </tr>
-        </tbody>
-    </table>
-    <script></script>
-
-</fieldset>
-<input type="submit" value="Save" name="commit"></input>
-
+        <input type="hidden" value="✓" name="utf8" />
+        <input type="hidden" value="z52Uy2Kcc7S1cP+fy+Kc+MCf5YI8qjKDxCQZ+VAXo98FjWClaIMjIUVzRSazPa1mKRZAYHemzEAYOtdBJRFRCg==" name="authenticity_token" />
+        <fieldset class="box">
+            <legend>
+            </legend>
+            <table class="query-columns">
+                <thead>
+                    <tr>
+                    	<td><b>Unassigned testcases</b></td>
+                    	<td></td>
+                	    <td><b>Assigned testcases</b></td>
+                    </tr>
+                <thead>
+                <tbody>
+                    <tr>
+                        <td style="padding-left:0">
+                            <div id="html1" style="width:500px;height:350px" />
+                        </td>
+                        <td class="buttons" style="align:left; width:60px;">
+                            <input type="button" id="moveright" value="→" style="float:left;" />
+                            <br /><br />
+                            <input type="button" id="moveleft" value="←" style="float:left;" />
+                        </td>
+                        <td>
+                            <div id="html2" style="width:500px;height:350px" />
+                            <!--select id="selected_columns" ondblclick="moveOptions(this.form.selected_columns, this.form.available_columns);" style="width:500px; height:350px" size="10" multiple="multiple" name="settings[issue_list_default_columns][]">
+                            </select-->
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <script></script>
+        </fieldset>
+        <input type="submit" value="Save" name="commit"></input>
     </form>
-
 </div>
+
+<script type="text/javascript">
+function translate(data) {
+    var res = [];
+    for (var name in data) {
+        var node = {'text': name};
+        if (data[name].type != "method") {
+            node['children'] = translate(data[name].content)
+        }
+        res.push(node);
+    }
+    return res;
+}
+
+function moveright() {
+    var from = $('#html1').jstree(true);
+    var to = $('#html2').jstree(true);
+    var sel = from.get_selected(true);
+    for (var s of sel) {
+        move(from, to, s);
+    }
+}
+
+function moveleft() {
+    var from = $('#html2').jstree(true);
+    var to = $('#html1').jstree(true);
+    var sel = from.get_selected(true);
+    for (var s of sel) {
+        move(from, to, s);
+    }
+}
+
+// This function moves a jstree-node from one tree to another tree
+// and copies all children. The ids are also copied as is.
+function move(from, to, node) {
+    // First, get the path of the node
+    pids = from.get_path(node, null, true);
+    // and pop the last element (the node itself)
+    pids.pop();
+    // such that pids now contains the ids of all parents.
+
+    // Copy the path nodes, if they don't exist without copying children
+    for (var p of pids) {
+        // Get the json object of the parent node
+        var j = from.get_json(p);
+        // Check if it already exists in target tree
+        var ex = to.get_node(j.id);
+        if (!ex) {
+            // If it does not exist, create a new one in target tree
+            // with same id and text. TODO: Copy other information too
+            to.create_node(from.get_parent(p), {
+                'id': j.id,
+                'text': j.text,
+            });
+        }
+    }
+
+    // Create the selected node in target tree and copy its children
+    // TODO: Maybe there is a direct copy?
+    // Again, get the json object of the node
+    var j = from.get_json(node);
+    var ex = to.get_node(j.id);
+    if (!ex) {
+        // If it does not yet exist in target tree, just copy it
+        to.create_node(from.get_parent(node), j);
+    } else {
+        // Otherwise, ignore the current node and just move the children
+        for (var c of j.children) {
+            move(from, to, c);
+        }
+    }
+
+    // Remove the selected node from the source tree
+    from.delete_node(node);
+}
+
+// After the document is initialized 
+$(document).ready(function() {
+    $("#moveleft").click(moveleft);
+    $("#moveright").click(moveright);
+    // Load testcases via ajax:
+    $.ajax({
+        url: "/redmine/testcases?project_id=<%= @project.id %>",
+        dataType: "json"
+    }).done(function(data) {
+        // Create the left tree with the loaded data
+        $('#html1').jstree({
+            'plugins' : [ "wholerow" ],
+            'core': {
+                'data': translate(data),
+                'check_callback' : true
+            }
+        })
+        // Create the empty right tree
+        $('#html2').jstree({
+            'plugins' : [ "wholerow" ],
+            'core': {
+                'check_callback' : true
+            }
+        });
+    })
+})
+</script>

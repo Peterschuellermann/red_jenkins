@@ -15,11 +15,8 @@ module TestcasesHelper
             # If the hash has already a key, then the content of the package is added to the map
         elsif map.has_key?(path_array[0])
             pack = map[path_array[0]]
-            statusvalue = 0
-            if pack[:status].has_key?(t.status.downcase)
-  	            statusvalue = pack[:status][t.status.downcase]
-            end
-            pack[:status][t.status.downcase] = statusvalue + 1;
+            pack[:status][t.status.downcase] ||= 0;
+            pack[:status][t.status.downcase] += 1;
             add(pack[:content], path_array.drop(1), t)
             # Else the content is added to the map
             # Else add the content to the map
