@@ -60,7 +60,7 @@ Here you can see all the test cases of the project:
 $(document).ready(function() {
   $.jstree.defaults.core.themes.variant = "large";
   $('#html1').jstree({
-    "plugins" : [ "state", "wholerow" ]
+    "plugins" : [ "wholerow" ]
   });
 })
 </script>
@@ -86,7 +86,7 @@ def listing(map)
           %> <li data-jstree='{"opened":false}'> <%
         end
         %>
-        <%= v[:name] %>  
+        <a href="http://localhost/redmine"><%= v[:name] %> </a> 
         <br />
 
         <% 
