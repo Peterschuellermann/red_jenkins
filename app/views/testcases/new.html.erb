@@ -1,1 +1,39 @@
-<h2>TestcasesController#new</h2>
+<%= title "New testcase" %>
+
+<%= labelled_form_for @testcase, :url => _project_issues_path(@project),
+                             :html => {:id => 'issue-form', :multipart => true} do |f| %>
+  <%= error_messages_for 'issue' %>
+  <%= hidden_field_tag 'copy_from', params[:copy_from] if params[:copy_from] %>
+  <div class="box tabular">
+    <div id="all_attributes">
+    <% if @testcase.safe_attribute? 'subject' %>
+	<p><%= f.text_field :subject, :size => 80, :maxlength => 255, :required => true %></p>
+	<% end %>
+
+	<% if @testcase.safe_attribute? 'description' %>
+	<p>
+ 		<%= f.label_for_field :description, :required => @issue.required_attribute?('description') %>
+  		<%= link_to_function image_tag('edit.png'), '$(this).hide(); $("#issue_description_and_toolbar").show()' unless @issue.new_record? %>
+  		<%= content_tag 'span', :id => "issue_description_and_toolbar", :style => (@issue.new_record? ? nil : 'display:none') do %>
+    		<%= f.text_area :description,
+                   :cols => 60,
+                   :rows => (@issue.description.blank? ? 10 : [[10, @issue.description.length / 50].max, 100].min),
+                   :accesskey => accesskey(:edit),
+                   :class => 'wiki-edit',
+                   :no_label => true %>
+  		<% end %>
+	</p>
+	<%= wikitoolbar_for 'issue_description' %>
+	<% end %>
+  </div>
+
+  <%= submit_tag l(:button_create) %>
+  <%= submit_tag l(:button_create_and_continue), :name => 'continue' %>
+  <%= preview_link preview_new_issue_path(:project_id => @testcase.project), 'issue-form' %>
+<% end %>
+
+<div id="preview" class="wiki"></div>
+
+<% content_for :header_tags do %>
+    <%= robot_exclusion_tag %>
+<% end %>

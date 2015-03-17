@@ -29,7 +29,6 @@ def add(map, path_array, t)
         # TODO: Update progress of the current package
         add(pack[:content], path_array.drop(1), t)
   # Else the content is added to the map
-  # Else add the content to the map
     else
         pack = {}
         pack[:name] = path_array[0]
@@ -60,7 +59,7 @@ Here you can see all the test cases of the project:
 $(document).ready(function() {
   $.jstree.defaults.core.themes.variant = "large";
   $('#html1').jstree({
-    "plugins" : [ "wholerow" ]
+    "plugins" : [ "state", "wholerow" ]
   });
 })
 </script>
@@ -73,12 +72,18 @@ def listing(map)
     map.each do |k, v|
         if v[:type] == "method"
             if v[:status] == "failed"
-               %> <li data-jstree='{"icon":"jstree-file"}'><span style="background-color: #F5A9A9;"> <%
+               %> 
+               <li data-jstree='{"icon":"jstree-file"}'><span style="background-color: #F5A9A9;"> 
+               <%
             elsif v[:status] == "passed"
-               %> <li data-jstree='{"icon":"jstree-file"}'><span style="background-color: #BCF5A9;"> <%
+               %> 
+               <li data-jstree='{"icon":"jstree-file"}'><span style="background-color: #BCF5A9;"> 
+               <%
             # If status is "not implemented"
             else
-               %> <li data-jstree='{"icon":"jstree-file"}'><span style="background-color: #A9D0F5;"> <%
+               %> 
+               <li data-jstree='{"icon":"jstree-file"}'><span style="background-color: #A9D0F5;"> 
+               <%
             end
         else
         # If "opened" is true, the whole tree is opened when accessing the page
@@ -86,7 +91,7 @@ def listing(map)
           %> <li data-jstree='{"opened":false}'> <%
         end
         %>
-        <a href="http://localhost/redmine"><%= v[:name] %> </a> 
+        <%= link_to v[:name], "http://localhost/redmine/" %>
         <br />
 
         <% 

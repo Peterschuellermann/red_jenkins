@@ -1,7 +1,7 @@
 class TestcasesController < ApplicationController
  	def index
   @project = Project.find(params[:project_id])
-	@testcases = Testcase.all
+	@testcases = Testcase.where(:project_id => @project)
 	end
 	
 	def show
