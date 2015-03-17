@@ -1,4 +1,6 @@
 class Testcase < ActiveRecord::Base
+	include Redmine::SafeAttributes
+	
     validates :name, 		presence: 	true,
         length:		{in:5..50},
         uniqueness: { scope: :path}

@@ -12,7 +12,7 @@ content_for :header_tags do %>
 <h2>Tests</h2>
 
 <% # Button to create a new testcase %>
-<%= link_to "Create new manual testcase", new_project_document_path(@project), :class => 'icon icon-add',
+<%= link_to "Create new manual testcase", new_project_testcase_path(@project), :class => 'icon icon-add',
       :onclick => 'showAndScrollTo("add-document", "document_title"); return false;' if User.current.allowed_to?(:add_documents, @project) 
 %>
 <p></p>
@@ -24,7 +24,7 @@ Here you can see all the test cases of the project:
 $(document).ready(function() {
   $.jstree.defaults.core.themes.variant = "large";
   $('#html1').jstree({
-    "plugins" : [ "wholerow" ]
+    "plugins" : [ "state", "wholerow" ]
   });
 })
 </script>
@@ -37,12 +37,18 @@ def listing(map)
     map.each do |k, v|
         if v[:type] == "method"
             if v[:status] == "failed"
-               %> <li data-jstree='{"icon":"jstree-file"}'><span style="background-color: #F5A9A9;"> <%
+               %> 
+               <li data-jstree='{"icon":"jstree-file"}'><span style="background-color: #F5A9A9;"> 
+               <%
             elsif v[:status] == "passed"
-               %> <li data-jstree='{"icon":"jstree-file"}'><span style="background-color: #BCF5A9;"> <%
+               %> 
+               <li data-jstree='{"icon":"jstree-file"}'><span style="background-color: #BCF5A9;"> 
+               <%
             # If status is "not implemented"
             else
-               %> <li data-jstree='{"icon":"jstree-file"}'><span style="background-color: #A9D0F5;"> <%
+               %> 
+               <li data-jstree='{"icon":"jstree-file"}'><span style="background-color: #A9D0F5;"> 
+               <%
             end
         else
         # If "opened" is true, the whole tree is opened when accessing the page
@@ -50,7 +56,7 @@ def listing(map)
           %> <li data-jstree='{"opened":false}'> <%
         end
         %>
-        <a href="http://localhost/redmine"><%= v[:name] %> </a> 
+        <%= link_to v[:name], "http://localhost/redmine/" %>
         <br />
 
         <% 

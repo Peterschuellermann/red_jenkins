@@ -1,4 +1,5 @@
 class TestcasesController < ApplicationController
+<<<<<<< HEAD
 
     include TestcasesHelper
 
