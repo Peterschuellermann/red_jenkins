@@ -121,6 +121,7 @@ function setHiddenValues(tree, node, value) {
     }
 }
 
+// Delete all subnodes of current node within a tree, if they are empty
 function cleanup(tree, node) {
     if (node.id.indexOf(leafprefix) <= -1) {
         // If this is an intermediate
@@ -136,6 +137,7 @@ function cleanup(tree, node) {
     }
 }
 
+// Check if a node of a tree is empty (does not contain any testcases)
 function is_empty(tree, node) {
     if (node.id.indexOf(leafprefix) <= -1) {
         // If this is an intermediate node with subtrees
