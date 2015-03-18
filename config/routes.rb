@@ -6,6 +6,4 @@ resources :projects do
 end
 
 get '/issues/:issue_id/progress', :to => 'testcases#progress'
-
-get 'jenkins_update', :to => 'jenkinshandler#updatecases'
-
+get '/projects/:project_id/jenkins_update', :to => 'jenkinshandler#updatecases'

@@ -13,8 +13,6 @@ testcolors = {
 testcolors.default = "gray"
 %>
 
-<div class="red_jenkins_testcases_showhook">
-
 <hr />
 
 <div class="testcaseprogress"> 
@@ -93,13 +91,14 @@ testcases.each do |t|
 			</td>
 		</tr>
 		<tr>
-			<td colspan="2"><%= t.description %></div>
-			<td>-pass/fail-</td>
+			<td colspan="2"><%= t.description %></td>
+			<td>
+<input type="button" name="togglebutton" value="toggle state" onclick="" style="height:20px;font-size:10px;">
+			</td>
         </tr>
 		<%
 	end
 end
 %>
     </table>
-</div>
 </div>

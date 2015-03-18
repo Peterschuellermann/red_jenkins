@@ -1,9 +1,9 @@
 <!-- settings view for the red_jenkins plugin -->
-
-<table>
+<h2>Jenkins settings</h2>
+<table style="min-width:100%">
   <tbody>
     <tr>
-      <th>Server URL</th>
+      <th style="min-width:15%">Server URL</th>
       <td>
         <input type="text" id="settings_red_jenkins_server_url" 
                            value="<%= settings['red_jenkins_server_url'] %>" 
@@ -65,8 +65,7 @@
                            value="<%= settings['red_jenkins_jenkins_path'] %>" 
                            name="settings[red_jenkins_jenkins_path]" >
         </td><td>
-                           the optional context path for Jenkins :ssl (Boolean) — default: false —
-                           indicates if Jenkins is accessible over HTTPS
+                           the optional context path for Jenkins
 
       </td>
     </tr>
@@ -186,7 +185,7 @@
                            value="<%= settings['red_jenkins_identity_file'] %>" 
                            name="settings[red_jenkins_identity_file]" >
                  </td><td>
-                           the priviate key file for Jenkins CLI authentication, it is used only for executing CLI commands. Also remember to upload the public key to <Server IP>:<Server Port>/user/<Username>/configure
+                           the priviate key file for Jenkins CLI authentication, it is used only for executing CLI commands. Also remember to upload the public key to &lt;Server IP&gt;:&lt;Server Port&gt;/user/&lt;Username&gt;/configure
 
       </td>
     </tr>
@@ -201,6 +200,38 @@
                            Cookies to be sent with all requests in the format: name=value; name2=value2
       </td>
     </tr>
+      
+  </tbody>
+</table>
+<p></p>
+<hr></hr>
+<h2>Assign Jenkins jobs to projects</h2>
+here it is possible to assign Jenkins jobs to projects, by adding them in the field in this form: job1;job2
+ <table style="min-width:100%">
+  <tbody>
+    
+	
+<% 
+  projects = Project.all
+  projects.each do |p|
+  temp = p.identifier
+ %> 
+		<tr>
+		<th style="min-width:15%">
+			<%= temp%>
+		</th>
+		<td>
+        <input type="text" id="settings_red_jenkins_<%= temp%>" 
+                           value="<%= settings["red_jenkins_#{temp}"] %>" 
+                           name="settings[red_jenkins_<%= temp%>]" >
+                           
+		</td>
+		</tr>
+  <%end%>	
+	
+		
+    
+    
     
   </tbody>
 </table>
