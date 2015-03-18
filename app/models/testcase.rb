@@ -6,7 +6,7 @@ class Testcase < ActiveRecord::Base
 	validates :path,		presence:	true
 							
 	attr_accessible :name, :description, :time_last_run, 
-					:path, :status, :test_type
+					:path, :status, :test_type, :project_id
 					
 	has_many :issues, through: :testcaseissuerelations
 end

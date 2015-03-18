@@ -7,7 +7,7 @@ class CreateTestcases < ActiveRecord::Migration
       t.string :status
       t.string :path
       t.string :test_type
-      t.references :project
+      t.string :project_id
     end
   end
 end

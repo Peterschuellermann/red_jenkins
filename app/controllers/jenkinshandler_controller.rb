@@ -123,7 +123,7 @@ class JenkinshandlerController < ApplicationController
 		
 		if @test_result.any?
 			parse_test_results
-			compare_test_results
+			compare_test_results(params.permit(:project_id))
 		end
 		
 		redirect_to home_path
@@ -149,6 +149,7 @@ class JenkinshandlerController < ApplicationController
 		input["status"] = testcase_input["status"]
 		input["test_type"] = "AUTOMATIC"
 		input["time_last_run"] = DateTime.now
+		input["project_id"] = testcase_input["project_id"]
 		@testcase = Testcase.new(input)
 				
 		if @testcase.save			
@@ -165,6 +166,7 @@ class JenkinshandlerController < ApplicationController
 		input["status"] = testcase_input["status"]
 		input["test_type"] = "AUTOMATIC"
 		input["time_last_run"] = DateTime.now
+		input["project_id"] = testcase_input["project_id"]
 		
 		if @testcase.update(input)
 		else
@@ -224,9 +226,9 @@ class JenkinshandlerController < ApplicationController
 	# new test from test results are added and old entries in the database
 	# are removed.
 	private	
-		def compare_test_results
+		def compare_test_results(params)
 			# filter for automatic tests
-			testcases = Testcase.where(:test_type => "AUTOMATIC")
+			testcases = Testcase.where(:test_type => "AUTOMATIC", :project_id => params["project_id"])
 			
 			# 2 empty array that are used to temporarly save the updated
 			# entries so that we can compare them with the remaining tests
@@ -237,7 +239,7 @@ class JenkinshandlerController < ApplicationController
 				testcases.each do |t|
 				if t != nil && r != nil
 					if t["name"] == r["name"] && t["path"]==r["className"] 				
-						
+						r["project_id"] = params["project_id"]
 						self.update(r,t[:id])
 						
 						# add current entry to our temp arrays
@@ -255,6 +257,7 @@ class JenkinshandlerController < ApplicationController
 			#creates the entries in the database that have not been previously 
 			# in the database but are in our test results that we get from jenkins
 			@test_result_parsed.each do |r|
+				r["project_id"] = params["project_id"]
 				self.create(r)
 			end
 			

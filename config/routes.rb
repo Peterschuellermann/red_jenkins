@@ -2,5 +2,4 @@
 # See: http://guides.rubyonrails.org/routing.html
 
 get 'testcases', :to => 'testcases#index'
-get 'jenkins_update', :to => 'jenkinshandler#updatecases'
-
+get '/projects/:project_id/jenkins_update', :to => 'jenkinshandler#updatecases'
