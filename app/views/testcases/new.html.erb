@@ -24,7 +24,7 @@
 	<%# Dropdown menu for selecting the path of the testcase %>
 		<%= text_field_tag :new_path %>
 		<%= f.label 'Add path manual:' %><br />
-		<%= f.select :path, (@testcases_available.collect{|p| [p.path]}), include_blank: true, :required => true %>
+		<%= f.select :path, (@testcases_available.collect{|p| [p.path]}.uniq), include_blank: true, :required => true %>
 	</p>
     </div>
   </div>
