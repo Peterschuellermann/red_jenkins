@@ -27,13 +27,6 @@ end
     </td><td><div>
 <% # This table is for the testcase trees %>
         <table style="width: 100%;">
-            <thead>
-                <tr>
-                    <td style="width: 50%;"><b>Unassigned testcases</b></td>
-                    <td style="width: 60px;"></td>
-                    <td style="width: 50%;"><b>Assigned testcases</b></td>
-                </tr>
-            </thead>
             <tbody>
                 <tr>
                     <td style="padding-left:0">
@@ -60,6 +53,9 @@ end
 
 // This counter is used for generating node ids (different from testcase ids)
 var idcounter = 1;
+var rootnodeid = "root";
+var nodeprefix = "node_";
+var leafprefix = "test_";
 
 // This function translates the json object received from the testcase view
 // a format readable by jstree
@@ -75,7 +71,8 @@ function translate(data) {
             node['id'] = "node" + idcounter++
         } else {
             // Store the test id as additional data into the tree leaf
-            node['id'] = data[name].content.id
+            node['id'] = leafprefix + data[name].content.id
+            node['icon'] = "jstree-file";
         }
         // Push the newly created node into a list
         res.push(node);
@@ -93,6 +90,7 @@ function moveright() {
         createNecessaryParents(from, to, s);
         move(from, to, s);
     }
+    cleanup(from, from.get_node(rootnodeid));
 }
 
 // This function moves all selected elements from the second to the first tree while preserving the tree structure
@@ -105,11 +103,12 @@ function moveleft() {
         createNecessaryParents(from, to, s);
         move(from, to, s);
     }
+    cleanup(from, from.get_node(rootnodeid));
 }
 
 // This function changes the values of the hidden fields corresponding to the testcases included in the node s to the given value recursively
 function setHiddenValues(tree, node, value) {
-    if (node.id.indexOf("node") > -1) {
+    if (node.id.indexOf(leafprefix) <= -1) {
         // If this is an intermediate node with subtrees and
         // ignore this node (because it shouldn't be a testcase)
         for (var child of node.children) {
@@ -118,7 +117,38 @@ function setHiddenValues(tree, node, value) {
         }
     } else {
         // If it is a leaf node with a particular testcase
-        $("#test_" + node.id).val(value);
+        $("#" + node.id).val(value);
+    }
+}
+
+function cleanup(tree, node) {
+    if (node.id.indexOf(leafprefix) <= -1) {
+        // If this is an intermediate
+        if (is_empty(tree, node) && node.id.indexOf(rootnodeid) <= -1) {
+            // Delete it if it is empty
+            tree.delete_node(node);
+        } else {
+            // Otherwise clean up children
+            for (var child of node.children) {
+                cleanup(tree, tree.get_node(child));
+            }
+        }
+    }
+}
+
+function is_empty(tree, node) {
+    if (node.id.indexOf(leafprefix) <= -1) {
+        // If this is an intermediate node with subtrees
+        // Check recursively
+        for (var child of node.children) {
+            if (!is_empty(tree, tree.get_node(child))) {
+                return false;
+            }
+        }
+        return true;
+    } else {
+        // If it is a leaf node, then it is by definition not empty
+        return false;
     }
 }
 
@@ -162,7 +192,9 @@ function move(from, to, node) {
         }
     }
     // Remove the selected node from the source tree
-    from.delete_node(node);
+    if (j.id.indexOf(rootnodeid) <= -1) {
+        from.delete_node(node);
+    }
 }
 
 // After the document is initialized 
@@ -178,15 +210,23 @@ $(document).ready(function() {
         $('#unassigned').jstree({
             'plugins' : [ "wholerow" ],
             'core': {
-                'data': translate(data),
-                'check_callback' : true
+                'data': {
+                    'id': rootnodeid,
+                    'text': "Unassigned testcases",
+                    'children': translate(data)
+                },
+                'check_callback': true
             }
-        })
+        });
         // Create the empty right tree
         $('#assigned').jstree({
             'plugins' : [ "wholerow" ],
             'core': {
-                'check_callback' : true
+                'data': {
+                    'id': rootnodeid,
+                    'text': "Assigned testcases"
+                },
+                'check_callback': true
             }
         });
     })
