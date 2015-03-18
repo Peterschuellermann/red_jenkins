@@ -4,7 +4,7 @@ class TestcasesController < ApplicationController
 
     def index
         @project = Project.find(params[:project_id])
-        @testcases = Testcase.all
+        @testcases = Testcase.where(:project_id => @project)
 
         # This variable is used to build the testcase tree
         @testcase_tree = {}
@@ -43,6 +43,7 @@ class TestcasesController < ApplicationController
         # Remember to put this in front of (every) controller method, so that
         # redmine can show the project menu links
         @project = Project.find(params[:project_id])
+        @testcases_available = Testcase.where(:project_id => @project)
         @testcase = Testcase.new
     end
 
@@ -55,13 +56,14 @@ class TestcasesController < ApplicationController
         @project = Project.find(params[:project_id])
         testcase_input = testcase_params
         testcase_input["time_last_run"] = DateTime.now
-        testcase_input["state"] = "UNKNOWN"
+        testcase_input["status"] = "UNKNOWN"
         testcase_input["test_type"] = "MANUAL"
         @testcase = Testcase.new(testcase_input)
 
         if @testcase.save
-            redirect_to testcases_path
+            render :action => 'index', :status => :created #, :location => issue_url(@issue)
         else
+            @testcases_available = Testcase.where(:project_id => @project)
             render 'new'
         end
     end
