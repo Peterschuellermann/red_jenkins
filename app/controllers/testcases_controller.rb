@@ -29,6 +29,16 @@ class TestcasesController < ApplicationController
         #leer
     end
 
+    def progress
+        testcases = Testcase.joins(:testcase_issue_relations).where("testcase_issue_relations.issue_id = ?", params[:issue_id])
+        res = {}
+        testcases.each do |t|
+            res[t.status] ||= 0
+            res[t.status] += 1
+        end
+        render json: res
+    end
+
     def new
         # Remember to put this in front of (every) controller method, so that
         # redmine can show the project menu links

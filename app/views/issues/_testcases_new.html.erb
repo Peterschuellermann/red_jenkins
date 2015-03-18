@@ -15,6 +15,13 @@ storedTestcase = {}
 # For each testcase t
 @testcases = Testcase.all
 @testcases.each do |t|
+    # Check if the testcase has already been added to the issue (when editing)
+    if @issue.id
+        concat "blablabla"
+        %><%= @issue.id %><%
+    else
+        concat "new issue bla"
+    end
     # Create a hidden field with corresponding ids, for example "test[42]" for the test case with id 42. This hidden field is updated by javascript when moving elements between trees.
     concat hidden_field_tag "test[#{t.id}]", 'false'
 end
