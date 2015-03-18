@@ -22,7 +22,7 @@
 	</p>
 	<%= wikitoolbar_for 'testcase_description' %>
 	<p>
-	<%=  %>
+		<%= f.select :path, (@testcases_available.collect{|p| [p.path]}), {:required => true}, :prompt => 'Enter path' %>
 	</p>
     </div>
   </div>
