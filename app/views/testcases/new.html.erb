@@ -2,8 +2,7 @@
 <%# TODO: add correct path %>
 <%= labelled_form_for @testcase, :url => project_testcases_path,
                              :html => {:multipart => true} do |f| %>
-  <%= error_messages_for 'issue' %>
-  <%= hidden_field_tag 'copy_from', params[:copy_from] if params[:copy_from] %>
+  <%= error_messages_for 'testcase' %>
   <div class="box tabular">
     <div id="all_attributes">
     <%# Textfield for the name %>
@@ -22,7 +21,10 @@
 	</p>
 	<%= wikitoolbar_for 'testcase_description' %>
 	<p>
-		<%= f.select :path, (@testcases_available.collect{|p| [p.path]}), {:required => true}, :prompt => 'Enter path' %>
+	<%# Dropdown menu for selecting the path of the testcase %>
+		<%= text_field_tag :new_path %>
+		<%= f.label 'Add path manual:' %><br />
+		<%= f.select :path, (@testcases_available.collect{|p| [p.path]}), include_blank: true, :required => true %>
 	</p>
     </div>
   </div>

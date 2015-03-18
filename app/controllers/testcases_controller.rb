@@ -46,13 +46,14 @@ class TestcasesController < ApplicationController
         @project = Project.find(params[:project_id])
         testcase_input = testcase_params
         testcase_input["time_last_run"] = DateTime.now
-        testcase_input["state"] = "UNKNOWN"
+        testcase_input["status"] = "UNKNOWN"
         testcase_input["test_type"] = "MANUAL"
         @testcase = Testcase.new(testcase_input)
 
         if @testcase.save
-            redirect_to testcases_path
+            render :action => 'index', :status => :created #, :location => issue_url(@issue)
         else
+            @testcases_available = Testcase.where(:project_id => @project)
             render 'new'
         end
     end
