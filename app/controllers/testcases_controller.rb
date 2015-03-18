@@ -29,6 +29,16 @@ class TestcasesController < ApplicationController
         #leer
     end
 
+    def progress
+        testcases = Testcase.joins(:testcase_issue_relations).where("testcase_issue_relations.issue_id = ?", params[:issue_id])
+        res = {}
+        testcases.each do |t|
+            res[t.status] ||= 0
+            res[t.status] += 1
+        end
+        render json: res
+    end
+
     def new
         # Remember to put this in front of (every) controller method, so that
         # redmine can show the project menu links
@@ -52,7 +62,6 @@ class TestcasesController < ApplicationController
         @testcase = Testcase.new(testcase_input)
 
         if @testcase.save
-            flash[:notice] = l(:notice_issue_successful_create, :id => view_context.link_to("##{@testcase.id}", testcase_path(@testcase), :title => @testcase.name))
             redirect_to :action => 'index'#, :status => :created, :location => issue_url(@issue)
         else
             @testcases_available = Testcase.where(:project_id => @project)

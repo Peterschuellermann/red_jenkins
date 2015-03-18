@@ -1,13 +1,11 @@
 class Testcase < ActiveRecord::Base
-	include Redmine::SafeAttributes
-	
-    #belongs_to :project
+    include Redmine::SafeAttributes
 
-    validates :name, 		presence: 	true,
-        length:		{in:5..50},
+    validates :name,        presence:   true,
+        length:     {in:5..50},
         uniqueness: { scope: :path}
 
-    validates :path,		presence:	true
+    validates :path,        presence:   true
 
     attr_accessible :name, :description, :time_last_run,
         :path, :status, :test_type, :project_id
