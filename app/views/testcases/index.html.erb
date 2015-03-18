@@ -12,12 +12,15 @@ content_for :header_tags do %>
 <h2>Tests</h2>
 
 <% # Button to create a new testcase %>
-<%= link_to "Create new manual testcase", new_project_testcase_path(@project), :class => 'icon icon-add',
-      :onclick => 'showAndScrollTo("add-document", "document_title"); return false;' if User.current.allowed_to?(:add_documents, @project) 
+<p>
+<%= link_to "Create a new manual testcase", new_project_testcase_path(@project), :class => 'icon icon-add'
+#:onclick => 'showAndScrollTo("add-document", "document_title"); return false;' if User.current.allowed_to?(:add_documents, @project)
 %>
-<p></p>
+</p>
 
+<p>
 Here you can see all the test cases of the project:
+</p>
 
 <script type="text/javascript">
 // After the document is initialized 
@@ -30,6 +33,13 @@ $(document).ready(function() {
 </script>
 <div class="box tabular" id="html1">
 <%
+
+@testcolors = {
+    "passed" => "green",
+    "failed" => "red"
+}
+@testcolors.default = "gray"
+
 # This method outputs a tree using ul-li-elements which should be wrapped
 # by a div that can be transformed by jstree
 def listing(map)
@@ -53,12 +63,12 @@ def listing(map)
         else
         # If "opened" is true, the whole tree is opened when accessing the page
         # If "opened" is false, the tree is closed when accessing the page
-          %> <li data-jstree='{"opened":false}'> <%
+          %>
+          <li data-jstree='{"opened":false}'>
+          <%
         end
         %>
         <%= link_to v[:name], "http://localhost/redmine/" %>
-        <br />
-
         <% 
         listing(v[:content]) if v[:content].is_a?(::Hash)
         %></li><%
@@ -78,9 +88,3 @@ end
 listing(storedTestcase)
 %>
 </div>
-<%
-
-
-%>
-
-

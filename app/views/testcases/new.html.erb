@@ -1,6 +1,6 @@
 <%= title "New testcase" %>
 <!-- TODO: add correct path -->
-<%= labelled_form_for @testcase, :url => testcases_path,
+<%= labelled_form_for @testcase, :url => project_testcases_path,
                              :html => {:id => 'issue-form', :multipart => true} do |f| %>
   <%= error_messages_for 'issue' %>
   <%= hidden_field_tag 'copy_from', params[:copy_from] if params[:copy_from] %>
