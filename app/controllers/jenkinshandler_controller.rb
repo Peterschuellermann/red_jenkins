@@ -109,7 +109,7 @@ class JenkinshandlerController < ApplicationController
 		  @jenkins_settings[:cookies] = Setting.plugin_red_jenkins['red_jenkins_cookies'].to_s
 		  end
 		  
-		@jenkins_job = "Test"
+		  @jenkins_job = ""
 		
 
 		
@@ -119,10 +119,9 @@ class JenkinshandlerController < ApplicationController
 	# that should be called from the outside.
 	def updatecases
 		connect_to_jenkins
-		get_latest_test_results
+		get_latest_test_results(params.permit(:project_id))
 		
-		if @test_result.any?
-			parse_test_results
+		if @test_result_parsed.any?
 			compare_test_results(params.permit(:project_id))
 		end
 		
@@ -182,10 +181,10 @@ class JenkinshandlerController < ApplicationController
 	# Method parses the returned results from jenkins into an array 
 	# with all the results only from the testmethods.
 	private
-		def parse_test_results
+		def parse_test_results(test_result)
 			tmp_parse = []
 			
-			@test_result["childReports"].each do |cr|
+			test_result["childReports"].each do |cr|
 				cr["result"]["suites"].each do |suite|
 					suite["cases"].each do |method|
 						tmp_parse.push(method)
@@ -194,8 +193,7 @@ class JenkinshandlerController < ApplicationController
 			
 			end
 			
-			@test_result_parsed = []
-			@test_result_parsed.replace(tmp_parse)
+			@test_result_parsed.push(tmp_parse)
 		end
 
 	# Method is called to connect to jenkins
@@ -213,9 +211,22 @@ class JenkinshandlerController < ApplicationController
 	# https://github.com/c-pid/Jenkins_Testscript/blob/master/output.json
 	#
 	private
-		def get_latest_test_results
-			current_build = @client.job.get_current_build_number(@jenkins_job)
-			@test_result = @client.job.get_test_results(@jenkins_job,current_build)
+		def get_latest_test_results(params)
+			@test_result = {} 
+			@test_result_parsed = []
+			jobs = Setting.plugin_red_jenkins["red_jenkins_#{params["project_id"]}"].split(";")
+			f = File.open("HALLO","w+")
+			
+			
+			jobs.each do |j|
+			f.write(j + "\n")
+			current_build = @client.job.get_current_build_number(j)
+			test_result = @client.job.get_test_results(j,current_build)
+			parse_test_results(test_result)
+			
+			end
+			f.write(@test_result_parsed)
+			f.close
 		end
 	
 	
@@ -235,7 +246,8 @@ class JenkinshandlerController < ApplicationController
 			# from our database and results
 			updated_testcases_db = []
 			updated_testcases_jenkins = []
-			@test_result_parsed.each do |r|
+			@test_result_parsed.each do |trp|
+			trp.each do |r|
 				testcases.each do |t|
 				if t != nil && r != nil
 					if t["name"] == r["name"] && t["path"]==r["className"] 				
@@ -248,7 +260,9 @@ class JenkinshandlerController < ApplicationController
 					end
 				end
 				end
+				end
 			end	
+			
 			
 			# remove the entries from our temporarly arrays in our original arrays
 			testcases = testcases - updated_testcases_db
@@ -256,9 +270,11 @@ class JenkinshandlerController < ApplicationController
 						
 			#creates the entries in the database that have not been previously 
 			# in the database but are in our test results that we get from jenkins
-			@test_result_parsed.each do |r|
+			@test_result_parsed.each do |trp|
+				trp.each do |r|
 				r["project_id"] = params["project_id"]
 				self.create(r)
+				end
 			end
 			
 			# removes the entries in the database that have been previously 

@@ -1,9 +1,9 @@
 <!-- settings view for the red_jenkins plugin -->
-
-<table>
+<h2>Jenkins settings</h2>
+<table style="min-width:100%">
   <tbody>
     <tr>
-      <th>Server URL</th>
+      <th style="min-width:15%">Server URL</th>
       <td>
         <input type="text" id="settings_red_jenkins_server_url" 
                            value="<%= settings['red_jenkins_server_url'] %>" 
@@ -200,6 +200,38 @@
                            Cookies to be sent with all requests in the format: name=value; name2=value2
       </td>
     </tr>
+      
+  </tbody>
+</table>
+<p></p>
+<hr></hr>
+<h2>Assign Jenkins jobs to projects</h2>
+here it is possible to assign Jenkins jobs to projects, by adding them in the field in this form: job1;job2
+ <table style="min-width:100%">
+  <tbody>
+    
+	
+<% 
+  projects = Project.all
+  projects.each do |p|
+  temp = p.identifier
+ %> 
+		<tr>
+		<th style="min-width:15%">
+			<%= temp%>
+		</th>
+		<td>
+        <input type="text" id="settings_red_jenkins_<%= temp%>" 
+                           value="<%= settings["red_jenkins_#{temp}"] %>" 
+                           name="settings[red_jenkins_<%= temp%>]" >
+                           
+		</td>
+		</tr>
+  <%end%>	
+	
+		
+    
+    
     
   </tbody>
 </table>
