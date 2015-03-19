@@ -27,7 +27,9 @@ class TestcasesController < ApplicationController
 
     def show
         @project = Project.find(params[:project_id])
+        @testcases_available = Testcase.where(:project_id => @project)
         @testcase = Testcase.find(params[:id])
+        render 'edit'
     end
 
     def progress
@@ -75,9 +77,10 @@ class TestcasesController < ApplicationController
         testcase_input["test_type"] = "MANUAL"
         testcase_input["project_identifier"] = @project.identifier
         @testcase = Testcase.new(testcase_input)
+        @testcase.path = params[:new_path] unless params[:new_path].empty?
 
         if @testcase.save
-            redirect_to :action => 'index'#, :status => :created, :location => issue_url(@issue)
+            redirect_to :action => 'index'
         else
             @testcases_available = Testcase.where(:project_identifier => params[:project_id])
             render 'new'
@@ -92,8 +95,9 @@ class TestcasesController < ApplicationController
         testcase_input["test_type"] = "MANUAL"
 
         if @testcase.update(testcase_input)
-            redirect_to testcases_path
+            redirect_to :action => 'index'
         else
+            @testcases_available = Testcase.where(:project_id => @project)
             render 'edit'
         end
     end
