@@ -212,7 +212,7 @@ $(document).ready(function() {
     $("#moveright").click(moveright);
     // Load testcases via ajax:
     $.ajax({
-        url: "/redmine/projects/<%= @project.id %>/testcases",
+        url: "/redmine/projects/<%= @project.identifier %>/testcases",
         dataType: "json"
     }).done(function(data) {
         // Create the left tree with the loaded data
