@@ -60,9 +60,10 @@ class TestcasesController < ApplicationController
         testcase_input["test_type"] = "MANUAL"
         testcase_input["project_id"] = @project.id
         @testcase = Testcase.new(testcase_input)
+        @testcase.path = params[:new_path] unless params[:new_path].empty?
 
         if @testcase.save
-            redirect_to :action => 'index'#, :status => :created, :location => issue_url(@issue)
+            redirect_to :action => 'index'
         else
             @testcases_available = Testcase.where(:project_id => @project)
             render 'new'
