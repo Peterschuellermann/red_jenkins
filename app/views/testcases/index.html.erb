@@ -9,74 +9,82 @@ content_for :header_tags do %>
   <%= stylesheet_link_tag 'default/style.min', :plugin => 'red_jenkins' %>
 <% end %>
 
-<%
-# TODO: Make this a helper function
-# Parameter map is the (sub-)tree in which we want to add the
-# testcase t which has the remaining path (given in an array).
-# The path_array is supposed to be path.split(".").
-def add(map, path_array, t)
-	# If path_array is empty, then the testcase shall be added to the map
-    if path_array.length == 0
-        map[t.name] = t
-    else
-    	# Otherwise, do recursion
-  	    map[path_array[0]] = {} unless map.has_key?(path_array[0])
-  	    add(map[path_array[0]], path_array.drop(1), t)
-    end
-end
-%>
-
 <h2>Tests</h2>
 
-Here you can see all the test cases of the project:
+<% # Button to create a new testcase %>
+<p>
+<%= link_to "Create a new manual testcase", new_project_testcase_path(@project), :class => 'icon icon-add'
+#:onclick => 'showAndScrollTo("add-document", "document_title"); return false;' if User.current.allowed_to?(:add_documents, @project)
+%>
+</p>
 
+<p>
+Here you can see all the test cases of the project:
+</p>
+
+<script type="text/javascript">
+// After the document is initialized 
+$(document).ready(function() {
+  $.jstree.defaults.core.themes.variant = "large";
+  $('#html1').jstree({
+    "plugins" : [ "state", "wholerow" ]
+  });
+})
+</script>
 <div class="box tabular" id="html1">
 <%
+
+@testcolors = {
+    "passed" => "green",
+    "failed" => "red"
+}
+@testcolors.default = "gray"
+
 # This method outputs a tree using ul-li-elements which should be wrapped
 # by a div that can be transformed by jstree
 def listing(map)
     %><ul><%
     map.each do |k, v|
-        %><li class="jstree-open"><%= k %> <br /><%
-        listing(v) if v.is_a?(::Hash)
+        if v[:type] == "method"
+            if v[:status] == "failed"
+               %> 
+               <li data-jstree='{"icon":"jstree-file"}'><span style="background-color: #F5A9A9;"> 
+               <%
+            elsif v[:status] == "passed"
+               %> 
+               <li data-jstree='{"icon":"jstree-file"}'><span style="background-color: #BCF5A9;"> 
+               <%
+            # If status is "not implemented"
+            else
+               %> 
+               <li data-jstree='{"icon":"jstree-file"}'><span style="background-color: #A9D0F5;"> 
+               <%
+            end
+        else
+        # If "opened" is true, the whole tree is opened when accessing the page
+        # If "opened" is false, the tree is closed when accessing the page
+          %>
+          <li data-jstree='{"opened":false}'>
+          <%
+        end
+        %>
+        <%= link_to v[:name], "http://localhost/redmine/" %>
+        <% 
+        listing(v[:content]) if v[:content].is_a?(::Hash)
         %></li><%
     end
     %></ul><%
 end
 
 # This variable is used to build the testcase tree
-bla = {}
+storedTestcase = {}
 # For each testcase t
 @testcases.each do |t|
 	# add t to the tree
-    add bla, t.path.split("."), t
+    add storedTestcase, t.path.split("."), t 
 end
 
 # Output the tree
-listing(bla)
+listing(storedTestcase)
 %>
 </div>
-<%
-
-# This is a temporary output for debugging
-@testcases.each do |t|
-%>
-<% if t.status.downcase == "failed" %>
-<span style="background-color: red;">
-<% elsif t.status.downcase == "passed" %>
-<span style="background-color: green;">
-<% else %>
-<span style="background-color: blue;">
-<% end %>
-<%= t.path %>
-</span>
-<br />
-<% end %>
-
-<script type="text/javascript">
-// After the document is initialized 
-$(document).ready(function() {
-	$.jstree.defaults.core.themes.variant = "large";
-	$('#html1').jstree();
-})
-</script>

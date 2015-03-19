@@ -1,9 +1,44 @@
-<h2> Corresponding testcaseprogress </h2>
-<% if @issues.empty? %>
-<p class="nodata"><%= l(:label_no_data) %></p>
-
-<% else %>
-
-<%= render :partial => 'issues/storycard_list', :locals => {:issues => @issues, :query => @query} %>
-<p class="pagination"><%= pagination_links_full @issue_pages, @issue_count %></p>
-<% end %>
+<script type="text/javascript">
+// This script is used to augment the issue table with a test progress column
+// After the document is initialized, the following function is called
+$(document).ready(function() {
+	// First, try to find the correct form (found by trial and error)
+    myform = $('form[action="/redmine/projects/<%= @project.identifier %>/issues"]').next();
+    // From the given form, take the table
+    mytable = myform.find('table');
+    // And take the header
+    thead = mytable.find('thead').find('tr');
+    // Append the title to the header row
+    thead.append('<th>Test progress</th>');
+    // Get the body
+    tbody = mytable.find('tbody').find('tr');
+    // For each row in the body
+    tbody.each(function() {
+    	// Take the row
+        var trow = $(this);
+        // Extract the issue id
+        var id = trow.attr("id").replace("issue-", "");
+        // Use Ajax to query the progress of the given issue
+        $.ajax({
+	       	url: "/redmine/issues/" + id + "/progress",
+    	    dataType: "json"
+    	}).done(function(data) {
+    		// Get the progress
+	        var progress = data;
+	        // Extract the success values (defaulted to 0)
+	        var succ = progress["PASSED"] || 0;
+	        // Sum up all values
+	        var sum = 0;
+	        for (var v in progress) {
+	        	sum += progress[v];
+	        }
+	        // Print a progress bar, if there is at least one testcase
+	        if (sum > 0) {
+		        trow.append('<td><progress max="' + sum + '" value="' + succ + '" /></td>');
+	        } else {
+		        trow.append('<td>-</td>');
+	        }
+        });
+    });
+})
+</script>

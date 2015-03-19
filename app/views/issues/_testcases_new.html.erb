@@ -1,64 +1,243 @@
-<div style="float:left; width:180px; text-align:right; ">
- <b> Testcaseassignment &nbsp;</b>
-</div>
-<div id="tab-content-issues" class="tab-content" style="float:left; margin-left:0px;">
+<%
+# The following code is for adding the jstree library.
+# It adds both the javascript library and the corresponding stylesheet.
+# You need to put those files into assets into the plugin directy.
 
-    <form method="post" accept-charset="UTF-8" action="/redmine/settings/edit?tab=issues">
+content_for :header_tags do
+%>
+  <%= javascript_include_tag 'jstree', :plugin => 'red_jenkins' %>
+  <%= stylesheet_link_tag 'default/style.min', :plugin => 'red_jenkins' %>
+<%
+end
 
-    <input type="hidden" value="✓" name="utf8"></input>
-    <input type="hidden" value="z52Uy2Kcc7S1cP+fy+Kc+MCf5YI8qjKDxCQZ+VAXo98FjWClaIMjIUVzRSazPa1mKRZAYHemzEAYOtdBJRFRCg==" name="authenticity_token"></input>
-    <fieldset class="box">
-        <legend>
+# This variable is used to build the testcase tree
+storedTestcase = {}
+# For each testcase t
+@testcases = Testcase.all
+@testcases.each do |t|
+    # Check if the testcase has already been added to the issue (when editing)
+    if @issue.id
+        concat "blablabla"
+        %><%= @issue.id %><%
+    else
+        concat "new issue bla"
+    end
+    # Create a hidden field with corresponding ids, for example "test[42]" for the test case with id 42. This hidden field is updated by javascript when moving elements between trees.
+    concat hidden_field_tag "test[#{t.id}]", 'false'
+end
+%>
 
-         
-        </legend>
-        
-        <table class="query-columns">
+<% # One table for fixed size column used for label, and another one for the trees %>
+<table style="width: 100%; table-layout: fixed; overflow: auto;">
+    <tr><td style="width: 180px; vertical-align: top; text-align:right;">
+        <b> Testcase assignment &nbsp;</b>
+    </td><td><div>
+<% # This table is for the testcase trees %>
+        <table style="width: 100%;">
             <tbody>
-            <tr>
-            	<td>
-                           <b> all testcases</b>
-            	</td>
-            	<td></td>
-            	<td>       <b>assigned testcases</b>
-            	</td>
-            </tr>
                 <tr>
                     <td style="padding-left:0">
-                        <select id="available_columns" ondblclick="moveOptions(this.form.available_columns, this.form.selected_columns);" style="width:500px; height:350px" size="10" multiple="multiple" name="available_columns[]">
+<% # This div is for the tree of unassigned testcases %>
+                        <div id="unassigned" style="height:350px; background-color: white; border: 1px solid gray;" />
+                    </td>
+                    <td class="buttons" style="align:left; width:60px;">
+                        <input type="button" id="moveright" value="→" style="float:left;" />
+                        <br /><br />
+                        <input type="button" id="moveleft" value="←" style="float:left;"   />
+                    </td>
+                    <td>
+<% # This div is for the tree of the assigned testcases %>
+                        <div id="assigned" style="height:350px; background-color: white; border: 1px solid gray;" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </td></tr>
+</table>
+<script type="text/javascript">
 
-        <option value="updated_on">
+// TODO: Make an own file for this script, modularize and clean it up
 
-            Updated
+// This counter is used for generating node ids (different from testcase ids)
+var idcounter = 1;
+var rootnodeid = "root";
+var nodeprefix = "node_";
+var leafprefix = "test_";
 
-        </option>
+// This function translates the json object received from the testcase view
+// a format readable by jstree
+function translate(data) {
+    var res = [];
+    // For all elements in this tree level
+    for (var name in data) {
+        // Create a node with the method name as text
+        var node = {'text': name};
+        if (data[name].type != "method") {
+            // Recursively translate all subtrees
+            node['children'] = translate(data[name].content)
+            node['id'] = "node" + idcounter++
+        } else {
+            // Store the test id as additional data into the tree leaf
+            node['id'] = leafprefix + data[name].content.id
+            node['icon'] = "jstree-file";
+        }
+        // Push the newly created node into a list
+        res.push(node);
+    }
+    return res;
+}
 
-    </select>
+// This function moves all selected elements from the first to the second tree while preserving the tree structure
+function moveright() {
+    var from = $('#unassigned').jstree(true);
+    var to = $('#assigned').jstree(true);
+    var sel = from.get_selected(true);
+    for (var s of sel) {
+        setHiddenValues(from, s, "true");
+        createNecessaryParents(from, to, s);
+        move(from, to, s);
+    }
+    cleanup(from, from.get_node(rootnodeid));
+}
 
-</td>
-<td class="buttons" style="align:left; width:60px;">
-    <input type="button" onclick="moveOptions(this.form.available_columns, this.form.selected_columns);" value="→" style="float:left;"></input>
-<br />
-<br></br>
-<input type="button" onclick="moveOptions(this.form.selected_columns, this.form.available_columns);" value="←" style="float:left;"></input>
+// This function moves all selected elements from the second to the first tree while preserving the tree structure
+function moveleft() {
+    var from = $('#assigned').jstree(true);
+    var to = $('#unassigned').jstree(true);
+    var sel = from.get_selected(true);
+    for (var s of sel) {
+        setHiddenValues(from, s, "false");
+        createNecessaryParents(from, to, s);
+        move(from, to, s);
+    }
+    cleanup(from, from.get_node(rootnodeid));
+}
 
-</td>
-<td>
-    <select id="selected_columns" ondblclick="moveOptions(this.form.selected_columns, this.form.available_columns);" style="width:500px; height:350px" size="10" multiple="multiple" name="settings[issue_list_default_columns][]">
+// This function changes the values of the hidden fields corresponding to the testcases included in the node s to the given value recursively
+function setHiddenValues(tree, node, value) {
+    if (node.id.indexOf(leafprefix) <= -1) {
+        // If this is an intermediate node with subtrees and
+        // ignore this node (because it shouldn't be a testcase)
+        for (var child of node.children) {
+            // Recursively set the values of all children
+            setHiddenValues(tree, tree.get_node(child), value);
+        }
+    } else {
+        // If it is a leaf node with a particular testcase
+        $("#" + node.id).val(value);
+    }
+}
 
-        
-    </select>
+// Delete all subnodes of current node within a tree, if they are empty
+function cleanup(tree, node) {
+    if (node.id.indexOf(leafprefix) <= -1) {
+        // If this is an intermediate
+        if (is_empty(tree, node) && node.id.indexOf(rootnodeid) <= -1) {
+            // Delete it if it is empty
+            tree.delete_node(node);
+        } else {
+            // Otherwise clean up children
+            for (var child of node.children) {
+                cleanup(tree, tree.get_node(child));
+            }
+        }
+    }
+}
 
-</td>
+// Check if a node of a tree is empty (does not contain any testcases)
+function is_empty(tree, node) {
+    if (node.id.indexOf(leafprefix) <= -1) {
+        // If this is an intermediate node with subtrees
+        // Check recursively
+        for (var child of node.children) {
+            if (!is_empty(tree, tree.get_node(child))) {
+                return false;
+            }
+        }
+        return true;
+    } else {
+        // If it is a leaf node, then it is by definition not empty
+        return false;
+    }
+}
 
-            </tr>
-        </tbody>
-    </table>
-    <script></script>
+// This function creates the ancestors of the current node in the target tree, if they do not exist yet
+function createNecessaryParents(from, to, node) {
+    // First, get the path of the node
+    pids = from.get_path(node, null, true);
+    // and pop the last element (the node itself)
+    pids.pop();
+    // such that pids now contains the ids of all parents.
 
-</fieldset>
-<input type="submit" value="Save" name="commit"></input>
+    // Copy the path nodes, if they don't exist without copying children
+    for (var p of pids) {
+        // Get the json object of the parent node
+        var j = from.get_json(p);
+        // Check if it already exists in target tree
+        if (!to.get_node(j.id)) {
+            // If it does not exist, create a new one in target tree with same id and text.
+            // TODO: Copy other information too
+            to.create_node(from.get_parent(p), {
+                'id': j.id,
+                'text': j.text,
+            });
+        }
+    }
+}
 
-    </form>
+// This function moves a jstree-node from one tree to another tree and copies all children. The ids are also copied as is.
+function move(from, to, node) {
+    // Create the selected node in target tree and copy its children
+    // TODO: Maybe there is a direct copy?
+    // Again, get the json object of the node
+    var j = from.get_json(node);
+    if (!to.get_node(j.id)) {
+        // If it does not yet exist in target tree, just copy it
+        to.create_node(from.get_parent(node), j);
+    } else {
+        // Otherwise, ignore the current node and just move the children
+        for (var c of j.children) {
+            move(from, to, c);
+        }
+    }
+    // Remove the selected node from the source tree
+    if (j.id.indexOf(rootnodeid) <= -1) {
+        from.delete_node(node);
+    }
+}
 
-</div>
+// After the document is initialized 
+$(document).ready(function() {
+    $("#moveleft").click(moveleft);
+    $("#moveright").click(moveright);
+    // Load testcases via ajax:
+    $.ajax({
+        url: "/redmine/projects/<%= @project.id %>/testcases",
+        dataType: "json"
+    }).done(function(data) {
+        // Create the left tree with the loaded data
+        $('#unassigned').jstree({
+            'plugins' : [ "wholerow" ],
+            'core': {
+                'data': {
+                    'id': rootnodeid,
+                    'text': "Unassigned testcases",
+                    'children': translate(data)
+                },
+                'check_callback': true
+            }
+        });
+        // Create the empty right tree
+        $('#assigned').jstree({
+            'plugins' : [ "wholerow" ],
+            'core': {
+                'data': {
+                    'id': rootnodeid,
+                    'text': "Assigned testcases"
+                },
+                'check_callback': true
+            }
+        });
+    })
+})
+</script>

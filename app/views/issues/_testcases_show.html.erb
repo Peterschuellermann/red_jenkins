@@ -1,127 +1,104 @@
-<div class="red_jenkins_testcases_showhook">
+<%
+# Join the testcases with the association table to find all
+# testcases with the given issue id:
+testcases = Testcase.joins(:testcase_issue_relations).where("testcase_issue_relations.issue_id = ?", @issue.id)
 
-<hr></hr>
+# This hash is used for coloring the test status
+# TODO: Make this a helper somewhere?
+testcolors = {
+	"passed" => "green",
+	"failed" => "red"
+}
+# Set the default color to gray
+testcolors.default = "gray"
+%>
+
+<hr />
 
 <div class="testcaseprogress"> 
-  <p><strong>Concerning testcaseprogress</strong></p>
+  <p><strong>This issues overall testprogress</strong></p>
   <!-- TODO:add percentage-->
 </div>
 
-<hr></hr> <!--horizontal line-->
-<div class="automatic_testcases">
+<hr /> <!--horizontal line-->
   
-    <p><strong>Automatic testcases</strong></p>
-  
-    <table class="query-columns">
-    <!-- one row for the title and one for the list-->
-		<tr>
-	        <td>
-	        	<!-- columntitles and columnwidths, float is important for the divs to be in one line and not above each other-->
-	            <div style="width:200px; float:left">Name</div>
-	            <div style="width:100px; float:left">Date</div>
-	            <div style="width:700px; float:left">State</div>
-	        	<!-- large column for state to fill the <td> -->
-	        </td>
-		</tr>
+<p><strong>Automatic testcases</strong></p>
+
+<table class="query-columns" style="width: 100%;">
+	<!-- one row for the title and one for the list-->
+	<tr>
+        <td style="width: 60%;">Name</td>
+        <td style="width: 20%;">Date</td>
+        <td style="width: 20%;">Status</td>
+    </tr>
+</table>
+
+<div class="automatic_testcases"
+style="padding-left:0; overflow:auto; height:200px;border:1px; border-color:lightgrey; border-style:solid;">
+	<table class="query-columns" style="width: 100%;">
+<%
+# Add automatic testcases
+testcases.each do |t|
+	if t.test_type.downcase == "automatic"
+		%>
 	    <tr>
-	        <td style="padding-left:0">
-				<div style="overflow:auto; height:200px; width:1000px; border:1px; border-color:lightgrey; border-style:solid;">
-					<!-- some examples in german...-->
-					<!-- TODO: add functionality-->
-					<div>
-						<div style="float:left; min-width:200px;">Name des Eintrags</div>
-						<div style="float:left; min-width:100px;">04.03.2015</div>
-						<div style="float:left; min-width:700px; color:green;">/// passed ///</div>
-					</div>
-					<div>
-						<div style="float:left; min-width:200px;">Name des Eintrags</div>
-						<div style="float:left; min-width:100px;">04.03.2015</div>
-						<div style="float:left; min-width:700px; color:green;">/// passed ///</div>
-					</div>
-					<div>
-						<div style="float:left; min-width:200px;">Name des Eintrags</div>
-						<div style="float:left; min-width:100px;">04.03.2015</div>
-						<div style="float:left; min-width:700px; color:green;">/// passed ///</div>
-					</div>
-					<div>
-						<div style="float:left; min-width:200px;">Name des Eintrags</div>
-						<div style="float:left; min-width:100px;">04.03.2015</div>
-						<div style="float:left; min-width:700px; color:green;">/// passed ///</div>
-					</div>
-					<div>
-						<div style="float:left; min-width:200px;">Name des Eintrags</div>
-						<div style="float:left; min-width:100px;">04.03.2015</div>
-						<div style="float:left; min-width:700px; color:green;">/// passed ///</div>
-					</div>
-					<div>
-						<div style="float:left; min-width:200px;">Name des Eintrags</div>
-						<div style="float:left; min-width:100px;">04.03.2015</div>
-						<div style="float:left; min-width:700px; color:green;">/// passed ///</div>
-					</div>
-				</div>
-	        </td>
-	    </tr>
+			<td style="width: 60%;">
+			<%= t.path + "." + t.name %>
+			</td>
+			<td style="width: 20%;">
+			<%= t.time_last_run.strftime("%d.%m.%Y %H:%M") %>
+			</td>
+			<td style="width: 20%; color:<%= testcolors[t.status.downcase] %>;">
+			/// <%= t.status %> ///
+			</td>
+		</tr>
+		<%
+	end
+end
+%>
     </table>
 </div>
 
-<hr></hr> <!--horizontal line-->
+<hr /> <!--horizontal line-->
 
-<div class="manual_testcases">
-    <p><strong>Manual testcases</strong></p>
-    <table class="query-columns">
-    <!-- one row for the title and one for the list-->
-    	<tr>
-    		<td>
-	        	<!-- columntitles and columnwidths, float is important for the divs to be in one line and not above each other-->
-	            <div style="width:200px; float:left">Name</div>
-	            <div style="width:100px; float:left">Date</div>
-	            <div style="width:200px; float:left">State</div>
-	            <div style="width:500px; float:left">Error-report</div>
-        	</td>
-    	</tr>
+<p><strong>Manual testcases</strong></p>
+
+<table class="query-columns" style="width: 100%;">
+	<!-- one row for the title and one for the list-->
+    <tr>
+    	<td style="width:60%;">Name</td>
+	    <td style="width:20%;">Date</td>
+    	<td style="width:20%;">Status</td>
+   	</tr>
+</table>
+
+<div class="manual_testcases" style="overflow:auto; height:200px; border:1px; border-color:lightgrey; border-style:solid;">
+    <table class="query-columns" style="width: 100%;">
+<%
+# Add non-automatic (manual) testcases
+testcases.each do |t|
+	if t.test_type.downcase != "automatic"
+		%>
         <tr>
-            <td style="padding-left:0">
-                <div style="overflow:auto; height:200px; width:1000px; border:1px; border-color:lightgrey; border-style:solid;">
-                	<!-- some examples in german...-->
-					<!-- TODO: add functionality-->
-                	<div>
-                    	<div style="width:200px; float:left">Name des Eintrags</div>
-						<div style="width:100px; float:left">04.03.2015</div>
-						<div style="width:100px; float:left; color:green;">/// passed ///</div>
-						<div style="width:100px; float:left">-pass/fail-</div>
-						<div style="width:500px; float:left">Dies ist eine Beschreibung :) </div>
-					</div>
-                	<div>
-                    	<div style="width:200px; float:left">Name des Eintrags</div>
-						<div style="width:100px; float:left">04.03.2015</div>
-						<div style="width:100px; float:left; color:green;">/// passed ///</div>
-						<div style="width:100px; float:left">-pass/fail-</div>
-						<div style="width:500px; float:left">Dies ist eine Beschreibung :) </div>
-					</div>
-                	<div>
-                    	<div style="width:200px; float:left">Name des Eintrags</div>
-						<div style="width:100px; float:left">04.03.2015</div>
-						<div style="width:100px; float:left; color:green;">/// passed ///</div>
-						<div style="width:100px; float:left">-pass/fail-</div>
-						<div style="width:500px; float:left">Dies ist eine Beschreibung :) </div>
-					</div>
-                	<div>
-                    	<div style="width:200px; float:left">Name des Eintrags</div>
-						<div style="width:100px; float:left">04.03.2015</div>
-						<div style="width:100px; float:left; color:green;">/// passed ///</div>
-						<div style="width:100px; float:left">-pass/fail-</div>
-						<div style="width:500px; float:left">Dies ist eine Beschreibung :) </div>
-					</div>
-                	<div>
-                    	<div style="width:200px; float:left">Name des Eintrags</div>
-						<div style="width:100px; float:left">04.03.2015</div>
-						<div style="width:100px; float:left; color:green;">/// passed ///</div>
-						<div style="width:100px; float:left">-pass/fail-</div>
-						<div style="width:500px; float:left">Dies ist eine Beschreibung :) </div>
-					</div>
-				</div>
-            </td>
+			<td style="width: 60%;">
+			<%= t.path + "." + t.name %>
+			</td>
+			<td style="width: 20%;">
+			<%= t.time_last_run.strftime("%d.%m.%Y %H:%M") %>
+			</td>
+			<td style="width: 20%;color:<%= testcolors[t.status.downcase] %>;">
+			/// <%= t.status %> ///
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2"><%= t.description %></td>
+			<td>
+<input type="button" name="togglebutton" value="toggle state" onclick="" style="height:20px;font-size:10px;">
+			</td>
         </tr>
+		<%
+	end
+end
+%>
     </table>
-</div>
 </div>
