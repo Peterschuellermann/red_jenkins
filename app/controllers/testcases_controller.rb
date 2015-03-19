@@ -18,7 +18,7 @@ class TestcasesController < ApplicationController
 	def create
 		testcase_input = testcase_params
 		testcase_input["time_last_run"] = DateTime.now
-		testcase_input["state"] = "UNKNOWN"
+		testcase_input["state"] = "FAILED"
 		testcase_input["test_type"] = "MANUAL"
 		@testcase = Testcase.new(testcase_input)
  

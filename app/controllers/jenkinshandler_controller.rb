@@ -214,19 +214,14 @@ class JenkinshandlerController < ApplicationController
 		def get_latest_test_results(params)
 			@test_result = {} 
 			@test_result_parsed = []
-			jobs = Setting.plugin_red_jenkins["red_jenkins_#{params["project_id"]}"].split(";")
-			f = File.open("HALLO","w+")
-			
+			jobs = Setting.plugin_red_jenkins["red_jenkins_#{params["project_id"]}"].delete(' ').split(";")
 			
 			jobs.each do |j|
-			f.write(j + "\n")
-			current_build = @client.job.get_current_build_number(j)
-			test_result = @client.job.get_test_results(j,current_build)
-			parse_test_results(test_result)
-			
+				current_build = @client.job.get_current_build_number(j)
+				test_result = @client.job.get_test_results(j,current_build)
+				parse_test_results(test_result)
 			end
-			f.write(@test_result_parsed)
-			f.close
+
 		end
 	
 	
