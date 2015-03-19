@@ -8,16 +8,27 @@ end
 # Join the testcases with the association table to find all
 # testcases with the given issue id:
 testcases = Testcase.joins(:testcase_issue_relations).where("testcase_issue_relations.issue_id = ?", @issue.id)
+
+tests = testcases.length
+
+passed = 0
+testcases.each do |t|
+	passed += 1 if t.status.downcase == "passed"
+end
+
 %>
 
 <hr />
 
 <div class="testcaseprogress"> 
-  <p><strong>This issues overall testprogress</strong></p>
+  <p><strong>This issues overall testprogress</strong>
+  <span style="float: right;">
+  <progress id="issuetestprogress" max="<%= testcases.length %>" value="<%= passed %>" />
+  </span></p>
   <!-- TODO:add percentage-->
 </div>
 
-<hr /> <!--horizontal line-->
+<hr />
   
 <p><strong>Automatic testcases</strong></p>
 
@@ -46,7 +57,7 @@ testcases.each do |t|
 			<%= t.time_last_run.strftime("%d.%m.%Y %H:%M") %>
 			</td>
 			<td style="width: 20%;">
-			/// <%= t.status %> ///
+			/// <%= t.status.downcase %> ///
 			</td>
 		</tr>
 		<%
@@ -80,11 +91,11 @@ testcases.each do |t|
 			<td style="width: 60%;">
 			<%= t.path + "." + t.name %>
 			</td>
-			<td style="width: 20%;">
+			<td id="time_last_run" style="width: 20%;">
 			<%= t.time_last_run.strftime("%d.%m.%Y %H:%M") %>
 			</td>
-			<td style="width: 20%;">
-			/// <%= t.status %> ///
+			<td id="status" style="width: 20%;">
+			/// <%= t.status.downcase %> ///
 			</td>
 		</tr>
 		<tr>

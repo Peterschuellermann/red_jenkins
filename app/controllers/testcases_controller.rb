@@ -34,8 +34,9 @@ class TestcasesController < ApplicationController
         testcases = Testcase.joins(:testcase_issue_relations).where("testcase_issue_relations.issue_id = ?", params[:issue_id])
         res = {}
         testcases.each do |t|
-            res[t.status] ||= 0
-            res[t.status] += 1
+            s = t.status.downcase
+            res[s] ||= 0
+            res[s] += 1
         end
         render json: res
     end
@@ -61,6 +62,7 @@ class TestcasesController < ApplicationController
         else
             @testcase.status = "passed"
         end
+        @testcase.time_last_run = DateTime.now
         @testcase.save
         render json: @testcase
     end
