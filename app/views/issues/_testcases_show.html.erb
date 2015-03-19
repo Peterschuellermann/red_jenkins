@@ -1,16 +1,12 @@
 <%
+# Add the stylesheet for testcase status
+content_for :header_tags do
+  concat stylesheet_link_tag 'redjenkins', :plugin => 'red_jenkins'
+end
+
 # Join the testcases with the association table to find all
 # testcases with the given issue id:
 testcases = Testcase.joins(:testcase_issue_relations).where("testcase_issue_relations.issue_id = ?", @issue.id)
-
-# This hash is used for coloring the test status
-# TODO: Make this a helper somewhere?
-testcolors = {
-	"passed" => "green",
-	"failed" => "red"
-}
-# Set the default color to gray
-testcolors.default = "gray"
 %>
 
 <hr />
@@ -41,14 +37,14 @@ style="padding-left:0; overflow:auto; height:200px;border:1px; border-color:ligh
 testcases.each do |t|
 	if t.test_type.downcase == "automatic"
 		%>
-	    <tr>
+	    <tr class="<%= t.status.downcase %>">
 			<td style="width: 60%;">
 			<%= t.path + "." + t.name %>
 			</td>
 			<td style="width: 20%;">
 			<%= t.time_last_run.strftime("%d.%m.%Y %H:%M") %>
 			</td>
-			<td style="width: 20%; color:<%= testcolors[t.status.downcase] %>;">
+			<td style="width: 20%;">
 			/// <%= t.status %> ///
 			</td>
 		</tr>
@@ -79,14 +75,14 @@ end
 testcases.each do |t|
 	if t.test_type.downcase != "automatic"
 		%>
-        <tr>
+	    <tr class="<%= t.status.downcase %>">
 			<td style="width: 60%;">
 			<%= t.path + "." + t.name %>
 			</td>
 			<td style="width: 20%;">
 			<%= t.time_last_run.strftime("%d.%m.%Y %H:%M") %>
 			</td>
-			<td style="width: 20%;color:<%= testcolors[t.status.downcase] %>;">
+			<td style="width: 20%;">
 			/// <%= t.status %> ///
 			</td>
 		</tr>

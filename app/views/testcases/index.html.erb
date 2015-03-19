@@ -4,7 +4,8 @@
 # You need to put those files into assets into the plugin directy.
 content_for :header_tags do %>
   <%= javascript_include_tag 'jstree', :plugin => 'red_jenkins' %>
-  <%= stylesheet_link_tag 'testcasetree/style', :plugin => 'red_jenkins' %>
+  <%= stylesheet_link_tag 'default/style', :plugin => 'red_jenkins' %>
+  <%= stylesheet_link_tag 'redjenkins', :plugin => 'red_jenkins' %>
 <% end %>
 
 <h2>Tests</h2>
@@ -30,8 +31,9 @@ $(document).ready(function() {
       'check_callback': true
     }
   });
+  // Fix for clicking links in the tree:
   $("#testcasetree ul").on("click","li.jstree-node a",function(){
-    document.location.href = this; 
+    document.location.href = this;
   });
 })
 </script>
