@@ -28,7 +28,7 @@ end
 %>
 
 <% # One table for fixed size column used for label, and another one for the trees %>
-<table style="width: 100%; table-layout: fixed; overflow: auto;">
+<table style="width: 100%; table-layout: fixed;">
     <tr><td style="width: 180px; vertical-align: top; text-align:right;">
         <b> Testcase assignment &nbsp;</b>
     </td><td><div>
@@ -38,7 +38,7 @@ end
                 <tr>
                     <td style="padding-left:0">
 <% # This div is for the tree of unassigned testcases %>
-                        <div id="unassigned" style="height:350px; background-color: white; border: 1px solid gray;" />
+                        <div id="unassigned" style="height:350px; background-color: white; border: 1px solid gray; overflow: auto;" />
                     </td>
                     <td class="buttons" style="align:left; width:60px;">
                         <input type="button" id="moveright" value="→" style="float:left;" />
@@ -47,7 +47,7 @@ end
                     </td>
                     <td>
 <% # This div is for the tree of the assigned testcases %>
-                        <div id="assigned" style="height:350px; background-color: white; border: 1px solid gray;" />
+                        <div id="assigned" style="height:350px; background-color: white; border: 1px solid gray; overflow: auto;" />
                     </td>
                 </tr>
             </tbody>
@@ -75,6 +75,7 @@ function translate(data) {
         if (data[name].type != "method") {
             // Recursively translate all subtrees
             node['children'] = translate(data[name].content)
+            node['state'] = { 'opened': true };
             node['id'] = "node" + idcounter++
         } else {
             // Store the test id as additional data into the tree leaf
@@ -136,8 +137,12 @@ function cleanup(tree, node) {
             // Delete it if it is empty
             tree.delete_node(node);
         } else {
-            // Otherwise clean up children
-            for (var child of node.children) {
+            // Otherwise clean up children:
+            // BugFix: It is important to copy the array (using slice), because
+            // deletion changes the array and may therefore skip some values
+            var children = node.children.slice();
+            // For each child
+            for (var child of children) {
                 cleanup(tree, tree.get_node(child));
             }
         }
@@ -180,6 +185,7 @@ function createNecessaryParents(from, to, node) {
             to.create_node(from.get_parent(p), {
                 'id': j.id,
                 'text': j.text,
+                'state': { 'opened': true }
             });
         }
     }
@@ -235,7 +241,10 @@ $(document).ready(function() {
                 'core': {
                     'data': {
                         'id': rootnodeid,
-                        'text': "Assigned testcases"
+                        'text': "Assigned testcases",
+                        'state': {
+                            'opened': true
+                        }
                     },
                     'check_callback': true
                 }
@@ -247,6 +256,9 @@ $(document).ready(function() {
                 'data': {
                     'id': rootnodeid,
                     'text': "Unassigned testcases",
+                    'state': {
+                        'opened': true
+                    },
                     'children': translate(data)
                 },
                 'check_callback': true
