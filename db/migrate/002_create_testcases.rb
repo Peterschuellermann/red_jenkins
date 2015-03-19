@@ -8,6 +8,7 @@ class CreateTestcases < ActiveRecord::Migration
       t.string :path
       t.string :test_type
       t.string :project_identifier
+      t.string :error_report
     end
   end
 end
