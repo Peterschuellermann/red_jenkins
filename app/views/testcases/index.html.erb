@@ -48,7 +48,7 @@ def listing(map) %>
         if v[:type] == "method" %>
           <li data-jstree='{"icon":"jstree-file"}' class="<%= v[:status].downcase %>">
         <%
-          concat link_to v[:name], [@project, v[:content]]
+          concat link_to v[:name] + " ///"+ v[:status]+"///", [@project, v[:content]]
         else %>
           <li data-jstree='{"opened":true}' class="<%
             v[:status].default = 0
@@ -60,7 +60,7 @@ def listing(map) %>
             end
             %>
           %>">
-          <%= v[:name] %>
+          <%= v[:name]%> <%= "(" + v[:status]["passed"].to_s + "/" + (v[:status]["failed"]+v[:status]["passed"]).to_s + " passed)"%>
         <% end %>
         <% listing(v[:content]) if v[:content].is_a?(::Hash) %>
         </li>
