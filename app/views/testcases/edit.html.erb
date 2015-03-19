@@ -1,1 +1,38 @@
-<h2>TestcasesController#edit</h2>
+<%= title "Edit testcase" %>
+
+<%= labelled_form_for @testcase, :url => project_testcase_path,
+                             :html => {:multipart => true} do |f| %>
+  <%= error_messages_for 'testcase' %>
+  <div class="box tabular">
+   <div id="all_attributes">
+    <%# Textfield for the name %>
+	  <p><%= f.text_field :name, :maxlength => 255, :required => true %></p>
+	  <%# Textfield for description %>
+	  <p>
+ 		 <%= f.label_for_field :description, :required => true %>
+  		<%= content_tag 'span', :id => "testcase_description_and_toolbar" do %>
+    		<%= f.text_area :description,
+                   :cols => 60,
+                   :rows => (@testcase.description.blank? ? 10 : [[10, @testcase.description.length / 50].max, 100].min),
+                   :accesskey => accesskey(:edit),
+                   :class => 'wiki-edit',
+                   :no_label => true %>
+  		<% end %>
+	  </p>
+	  <%= wikitoolbar_for 'testcase_description' %>
+	  <p>
+	    <%# Dropdown menu for selecting the path of the testcase %>
+		  <%= text_field_tag :new_path %>
+		  <%= f.label 'Add path manual:' %><br />
+		  <%= f.select( :path, @testcases_available.collect{|p| [p.path]}.uniq, :include_blank => true) %>
+	  </p>
+   </div>
+  </div>
+
+  <%= submit_tag l(:button_submit) %>
+  <%= link_to l(:button_cancel), {}, :onclick => "$('#update').hide(); return false;" %>
+<% end %>
+
+<% content_for :header_tags do %>
+    <%= robot_exclusion_tag %>
+<% end %>

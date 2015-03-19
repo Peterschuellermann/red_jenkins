@@ -26,7 +26,10 @@ class TestcasesController < ApplicationController
     end
 
     def show
-        #leer
+        @project = Project.find(params[:project_id])
+        @testcases_available = Testcase.where(:project_id => @project)
+        @testcase = Testcase.find(params[:id])
+        render 'edit'
     end
 
     def progress
@@ -78,8 +81,9 @@ class TestcasesController < ApplicationController
         testcase_input["test_type"] = "MANUAL"
 
         if @testcase.update(testcase_input)
-            redirect_to testcases_path
+            redirect_to :action => 'index'
         else
+            @testcases_available = Testcase.where(:project_id => @project)
             render 'edit'
         end
     end
