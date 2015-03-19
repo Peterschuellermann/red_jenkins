@@ -125,7 +125,7 @@ class JenkinshandlerController < ApplicationController
 			compare_test_results(params.permit(:project_id))
 		end
 		
-		redirect_to home_path
+		redirect_to(:back)
 	end
 	
 	def index
