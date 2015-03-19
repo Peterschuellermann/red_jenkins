@@ -2,6 +2,7 @@
 # Add the stylesheet for testcase status
 content_for :header_tags do
   concat stylesheet_link_tag 'redjenkins', :plugin => 'red_jenkins'
+  concat javascript_include_tag 'togglebutton', :plugin => 'red_jenkins'
 end
 
 # Join the testcases with the association table to find all
@@ -75,7 +76,7 @@ end
 testcases.each do |t|
 	if t.test_type.downcase != "automatic"
 		%>
-	    <tr class="<%= t.status.downcase %>">
+	    <tr id="test_<%= t.id %>" class="<%= t.status.downcase %>">
 			<td style="width: 60%;">
 			<%= t.path + "." + t.name %>
 			</td>
@@ -89,7 +90,7 @@ testcases.each do |t|
 		<tr>
 			<td colspan="2"><%= t.description %></td>
 			<td>
-<input type="button" name="togglebutton" value="toggle state" onclick="" style="height:20px;font-size:10px;">
+				<input type="button" id="togglebutton" onclick="toggle(<%= @project.id %>, <%= t.id %>)" value="toggle status" class="togglebutton">
 			</td>
         </tr>
 		<%
