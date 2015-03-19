@@ -6,7 +6,7 @@
 
 content_for :header_tags do %>
   <%= javascript_include_tag 'jstree', :plugin => 'red_jenkins' %>
-  <%= stylesheet_link_tag 'default/style.min', :plugin => 'red_jenkins' %>
+  <%= stylesheet_link_tag 'testcasetree/style', :plugin => 'red_jenkins' %>
 <% end %>
 
 <h2>Tests</h2>
@@ -25,7 +25,7 @@ Here you can see all the test cases of the project:
 <script type="text/javascript">
 // After the document is initialized 
 $(document).ready(function() {
-  $.jstree.defaults.core.themes.variant = "large";
+  // $.jstree.defaults.core.themes.variant = "large";
   $('#html1').jstree({
     "plugins" : [ "state", "wholerow" ]
   });
@@ -48,11 +48,11 @@ def listing(map)
         if v[:type] == "method"
             if v[:status] == "failed"
                %> 
-               <li data-jstree='{"icon":"jstree-file"}'><span style="background-color: #F5A9A9;"> 
+               <li data-jstree='{"icon":"jstree-file"}' class="failed"><span style="background-color: #F5A9A9;"> 
                <%
             elsif v[:status] == "passed"
                %> 
-               <li data-jstree='{"icon":"jstree-file"}'><span style="background-color: #BCF5A9;"> 
+               <li data-jstree='{"icon":"jstree-file"}' class="passed"><span style="background-color: #BCF5A9;"> 
                <%
             # If status is "not implemented"
             else
