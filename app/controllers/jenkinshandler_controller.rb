@@ -119,13 +119,13 @@ class JenkinshandlerController < ApplicationController
 	# that should be called from the outside.
 	def updatecases
 		connect_to_jenkins
-		get_latest_test_results(params.permit(:project_id))
+		get_latest_test_results(params.permit(:project_identifier))
 		
 		if @test_result_parsed.any?
-			compare_test_results(params.permit(:project_id))
+			compare_test_results(params.permit(:project_identifier))
 		end
 		
-		redirect_to home_path
+		redirect_to(:back)
 	end
 	
 	def index
@@ -148,7 +148,7 @@ class JenkinshandlerController < ApplicationController
 		input["status"] = testcase_input["status"]
 		input["test_type"] = "AUTOMATIC"
 		input["time_last_run"] = DateTime.now
-		input["project_id"] = testcase_input["project_id"]
+		input["project_identifier"] = testcase_input["project_identifier"]
 		@testcase = Testcase.new(input)
 				
 		if @testcase.save			
@@ -165,7 +165,7 @@ class JenkinshandlerController < ApplicationController
 		input["status"] = testcase_input["status"]
 		input["test_type"] = "AUTOMATIC"
 		input["time_last_run"] = DateTime.now
-		input["project_id"] = testcase_input["project_id"]
+		input["project_identifier"] = testcase_input["project_identifier"]
 		
 		if @testcase.update(input)
 		else
@@ -214,7 +214,7 @@ class JenkinshandlerController < ApplicationController
 		def get_latest_test_results(params)
 			@test_result = {} 
 			@test_result_parsed = []
-			jobs = Setting.plugin_red_jenkins["red_jenkins_#{params["project_id"]}"].delete(' ').split(";")
+			jobs = Setting.plugin_red_jenkins["red_jenkins_#{params["project_identifier"]}"].delete(' ').split(";")
 			
 			jobs.each do |j|
 				current_build = @client.job.get_current_build_number(j)
@@ -234,7 +234,7 @@ class JenkinshandlerController < ApplicationController
 	private	
 		def compare_test_results(params)
 			# filter for automatic tests
-			testcases = Testcase.where(:test_type => "AUTOMATIC", :project_id => params["project_id"])
+			testcases = Testcase.where(:test_type => "AUTOMATIC", :project_identifier => params["project_identifier"])
 			
 			# 2 empty array that are used to temporarly save the updated
 			# entries so that we can compare them with the remaining tests
@@ -246,7 +246,7 @@ class JenkinshandlerController < ApplicationController
 				testcases.each do |t|
 				if t != nil && r != nil
 					if t["name"] == r["name"] && t["path"]==r["className"] 				
-						r["project_id"] = params["project_id"]
+						r["project_identifier"] = params["project_identifier"]
 						self.update(r,t[:id])
 						
 						# add current entry to our temp arrays
@@ -267,7 +267,7 @@ class JenkinshandlerController < ApplicationController
 			# in the database but are in our test results that we get from jenkins
 			@test_result_parsed.each do |trp|
 				trp.each do |r|
-				r["project_id"] = params["project_id"]
+				r["project_identifier"] = params["project_identifier"]
 				self.create(r)
 				end
 			end
