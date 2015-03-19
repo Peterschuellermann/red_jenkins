@@ -27,7 +27,7 @@ class TestcasesController < ApplicationController
 
     def show
         @project = Project.find(params[:project_id])
-        @testcases_available = Testcase.where(:project_id => @project)
+        @testcases_available = Testcase.where(:project_identifier => @project.identifier)
         @testcase = Testcase.find(params[:id])
         render 'edit'
     end
