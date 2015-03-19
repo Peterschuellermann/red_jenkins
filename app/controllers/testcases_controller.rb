@@ -26,7 +26,8 @@ class TestcasesController < ApplicationController
     end
 
     def show
-        #leer
+        @project = Project.find(params[:project_id])
+        @testcase = Testcase.find(params[:id])
     end
 
     def progress
@@ -50,6 +51,18 @@ class TestcasesController < ApplicationController
     def edit
         @project = Project.find(params[:project_id])
         @testcase = Testcase.find(params[:id])
+    end
+
+    def toggle
+        @project = Project.find(params[:project_id])
+        @testcase = Testcase.find(params[:id])
+        if (@testcase.status.downcase == "passed")
+            @testcase.status = "failed"
+        else
+            @testcase.status = "passed"
+        end
+        @testcase.save
+        render json: @testcase
     end
 
     def create

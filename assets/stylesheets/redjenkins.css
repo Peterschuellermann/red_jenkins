@@ -1,0 +1,14 @@
+.passed, .passed > div {
+  background-color: #BCF5A9;
+}
+.failed, .failed > div {
+  background-color: #F5A9A9;  
+}
+.notimplemented, .notimplemented > div {
+  background-color: #A9D0F5;  
+}
+
+.togglebutton {
+  height:20px;
+  font-size:10px;	
+}
