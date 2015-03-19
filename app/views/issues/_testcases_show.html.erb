@@ -12,9 +12,15 @@ testcases = Testcase.joins(:testcase_issue_relations).where("testcase_issue_rela
 tests = testcases.length
 
 passed = 0
+has_automatic = false
+has_manual = false
 testcases.each do |t|
 	passed += 1 if t.status.downcase == "passed"
+	has_automatic |= t.test_type.downcase == "automatic"
+	has_manual |= t.test_type.downcase != "automatic"
 end
+
+if has_automatic or has_manual
 
 %>
 
@@ -27,6 +33,12 @@ end
   </span></p>
   <!-- TODO:add percentage-->
 </div>
+
+<%
+end
+
+if has_automatic
+%>
 
 <hr />
   
@@ -67,7 +79,13 @@ end
     </table>
 </div>
 
-<hr /> <!--horizontal line-->
+<%
+end
+
+if has_manual
+%>
+
+<hr />
 
 <p><strong>Manual testcases</strong></p>
 
@@ -110,3 +128,5 @@ end
 %>
     </table>
 </div>
+
+<% end %>

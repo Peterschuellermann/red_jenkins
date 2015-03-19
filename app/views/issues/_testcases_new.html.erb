@@ -16,14 +16,14 @@ storedTestcase = {}
 @testcases = Testcase.all
 @testcases.each do |t|
     # Check if the testcase has already been added to the issue (when editing)
+    value = 'false'
     if @issue.id
-        concat "blablabla"
-        %><%= @issue.id %><%
-    else
-        concat "new issue bla"
+        if TestcaseIssueRelation.exists?(testcase_id: t.id, issue_id: @issue.id)
+            value = 'true'
+        end
     end
     # Create a hidden field with corresponding ids, for example "test[42]" for the test case with id 42. This hidden field is updated by javascript when moving elements between trees.
-    concat hidden_field_tag "test[#{t.id}]", 'false'
+    concat hidden_field_tag "test[#{t.id}]", value
 end
 %>
 
@@ -124,7 +124,7 @@ function setHiddenValues(tree, node, value) {
         }
     } else {
         // If it is a leaf node with a particular testcase
-        $("#" + node.id).val(value);
+        $("input#" + node.id + '[type="hidden"]').val(value);
     }
 }
 
@@ -215,25 +215,39 @@ $(document).ready(function() {
         url: "/redmine/projects/<%= @project.identifier %>/testcases",
         dataType: "json"
     }).done(function(data) {
-        // Create the left tree with the loaded data
-        $('#unassigned').jstree({
+        // Bind to the loading of the left tree
+        $('#unassigned').bind('loaded.jstree', function(e, data) {
+            // Create the empty right tree
+            $('#assigned').bind('loaded.jstree', function(e, data) {
+                // Move all assigned testcases to the right tree
+                from = $('#unassigned').jstree(true);
+                to = $('#assigned').jstree(true);
+                $('input[type="hidden"][name^="test"][value="true"]').each(function() {
+                    name = $(this).attr("name");
+                    testid = name.substring(5, name.length - 1);
+                    node = from.get_node(leafprefix + testid);
+                    createNecessaryParents(from, to, node);
+                    move(from, to, node);
+                });
+                cleanup(from, from.get_node(rootnodeid));
+            }).jstree({
+                'plugins' : [ "wholerow" ],
+                'core': {
+                    'data': {
+                        'id': rootnodeid,
+                        'text': "Assigned testcases"
+                    },
+                    'check_callback': true
+                }
+            });
+        // Create the left tree with the loaded data:
+        }).jstree({
             'plugins' : [ "wholerow" ],
             'core': {
                 'data': {
                     'id': rootnodeid,
                     'text': "Unassigned testcases",
                     'children': translate(data)
-                },
-                'check_callback': true
-            }
-        });
-        // Create the empty right tree
-        $('#assigned').jstree({
-            'plugins' : [ "wholerow" ],
-            'core': {
-                'data': {
-                    'id': rootnodeid,
-                    'text': "Assigned testcases"
                 },
                 'check_callback': true
             }

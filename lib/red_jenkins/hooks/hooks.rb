@@ -16,25 +16,32 @@ module RedJenkins
 
         # This is the controller hook for saving issues with testcases
         def controller_issues_new_after_save(context={ })
-            # Get the newly created issue
+            controller_issues_edit_after_save context
+        end
+
+        # This is the controller hook for saving issues with testcases
+        def controller_issues_edit_after_save(context={ })
+            # Get the updated issue
             issue = context[:issue]
 
             # TODO: Make the parameters safe and secure
             context[:params][:test].each do |id, value|
 
+                # Get the testcase with the given id
+                testcase = Testcase.find(id)
+
                 # If the value is set to true
                 if value.downcase == "true"
-
-                    # Get the testcase with the given id
-                    testcase = Testcase.find(id)
-
                     # Create an association connecting the current testcase
                     # with the given issue
-                    testcase.issues << issue
-
-                    # TODO: Is this necessary?
-                    testcase.save
+                    testcase.issues << issue unless testcase.issues.include? issue
+                else
+                    # Remove the association, as it is not wanted (anymore)
+                    testcase.issues.delete(issue)
                 end
+
+                # Save the changes. TODO: What if it fails?
+                testcase.save
             end
         end
 
