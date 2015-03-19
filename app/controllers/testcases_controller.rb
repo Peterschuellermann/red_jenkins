@@ -56,7 +56,7 @@ class TestcasesController < ApplicationController
         @project = Project.find(params[:project_id])
         testcase_input = testcase_params
         testcase_input["time_last_run"] = DateTime.now
-        testcase_input["status"] = "UNKNOWN"
+        testcase_input["status"] = "FAILED"
         testcase_input["test_type"] = "MANUAL"
         testcase_input["project_id"] = @project.id
         @testcase = Testcase.new(testcase_input)
@@ -95,5 +95,6 @@ class TestcasesController < ApplicationController
     def testcase_params
         params.require(:testcase).permit(:name, :description, :path)
     end
+
 
 end
