@@ -30,7 +30,9 @@
   </div>
 
   <%= submit_tag l(:button_submit) %>
+  <%# TODO (also in new.html.erb) "Cancel" button which should leave the page and direct to the testcase overview without saving the changes
   <%= link_to l(:button_cancel), "#", :onclick => '$("#add-testcase").hide(); return false;' %>
+  <%= delete_link project_testcase_path(@project, @testcase) %>
 <% end %>
 
 <% content_for :header_tags do %>
