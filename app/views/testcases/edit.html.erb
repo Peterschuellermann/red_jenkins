@@ -22,7 +22,7 @@
 	  <%= wikitoolbar_for 'testcase_description' %>
 	  <p>
 	    <%# Dropdown menu for selecting the path of the testcase %>
-		  <%= text_field_tag :new_path %>
+		  <%= text_field_tag(:new_path, nil, :size => 255) %>
 		  <%= f.label 'Add path manual:' %><br />
 		  <%= f.select( :path, @testcases_available.collect{|p| [p.path]}.uniq, :include_blank => true) %>
 	  </p>
@@ -30,7 +30,7 @@
   </div>
 
   <%= submit_tag l(:button_submit) %>
-  <%= link_to l(:button_cancel), {}, :onclick => "$('#update').hide(); return false;" %>
+  <%= link_to l(:button_cancel), "#", :onclick => '$("#add-testcase").hide(); return false;' %>
 <% end %>
 
 <% content_for :header_tags do %>
