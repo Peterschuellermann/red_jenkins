@@ -9,6 +9,8 @@
 **Step 2:** Changing into your root directory of Redmine (e.g. C:\Bitnami\redmine-3.0.0-0\apps\redmine\htdocs) and run the following command:
 
 `rake redmine:plugins:migrate RAILS_ENV=production`
+or
+`bundle exec rake redmine:plugins:migrate RAILS_ENV=production`
 
 **Step 3:** Restart Redmine
 
