@@ -3,10 +3,10 @@ require_dependency 'red_jenkins/hooks/hooks'
 
 Redmine::Plugin.register :red_jenkins do
     name 'Red Jenkins plugin'
-    author 'Author name'
+    author 'Peter Schüllermann'
     description 'This plugin includes Jenkins in Redmine'
-    version '0.0.1'
-    url 'http://www.isp.uni-luebeck.de'
+    version '1.0.0'
+    #url ''
     author_url 'https://github.com/Pepperrs/red_jenkins'
 
     permission :testcases, { :testcases => [:index]}, :public => true
