@@ -93,6 +93,7 @@ class TestcasesController < ApplicationController
         testcase_input = testcase_params
         testcase_input["time_last_run"] = DateTime.now
         testcase_input["test_type"] = "MANUAL"
+        testcase_input["path"] = params[:new_path] unless params[:new_path].empty?
 
         if @testcase.update(testcase_input)
             redirect_to :action => 'index'
@@ -107,7 +108,7 @@ class TestcasesController < ApplicationController
         @testcase = Testcase.find(params[:id])
         @testcase.destroy
 
-        redirect_to testcases_path
+        redirect_to :action => 'index'
     end
 
     private
