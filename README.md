@@ -12,7 +12,12 @@
 or
 `bundle exec rake redmine:plugins:migrate RAILS_ENV=production`
 
-**Step 3:** Restart Redmine
+**Step 3:** install missing Gems
+run this to install missing gems
+
+`bundle install --no-deployment`
+
+**Step 4:** Restart Redmine
 
 _See also: http://www.redmine.org/projects/redmine/wiki/Plugins_
 
