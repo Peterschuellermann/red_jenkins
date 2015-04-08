@@ -6,16 +6,19 @@
 
 `git clone https://github.com/Pepperrs/red_jenkins.git`
 
-**Step 2:** Changing into your root directory of Redmine (e.g. C:\Bitnami\redmine-3.0.0-0\apps\redmine\htdocs) and run the following command:
-
-`rake redmine:plugins:migrate RAILS_ENV=production`
-or
-`bundle exec rake redmine:plugins:migrate RAILS_ENV=production`
-
-**Step 3:** install missing Gems
+**Step 2:** install missing Gems
 run this to install missing gems
 
 `bundle install --no-deployment`
+
+**Step 3:** Changing into your root directory of Redmine (e.g. C:\Bitnami\redmine-3.0.0-0\apps\redmine\htdocs) and run the following command:
+
+`rake redmine:plugins:migrate RAILS_ENV=production`
+
+or
+
+`bundle exec rake redmine:plugins:migrate RAILS_ENV=production`
+
 
 **Step 4:** Restart Redmine
 
