@@ -218,7 +218,7 @@ $(document).ready(function() {
     $("#moveright").click(moveright);
     // Load testcases via ajax:
     $.ajax({
-        url: "/redmine/projects/<%= @project.identifier %>/testcases",
+        url: "<%= project_path(@project) %>/testcases",
         dataType: "json"
     }).done(function(data) {
         // Bind to the loading of the left tree
