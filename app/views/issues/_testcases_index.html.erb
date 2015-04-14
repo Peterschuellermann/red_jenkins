@@ -4,9 +4,10 @@
 <script type="text/javascript">
 // This script is used to augment the issue table with a test progress column
 // After the document is initialized, the following function is called
+
 $(document).ready(function() {
 	// First, try to find the correct form (found by trial and error)
-    myform = $('form[action="/redmine/projects/<%=@project.identifier %>/issues"]').next();
+    myform = $('form[action="<%=projects_path%>/<%=@project.identifier %>/issues"]').next();
     // From the given form, take the table
     mytable = myform.find('table');
     // And take the header
@@ -23,7 +24,7 @@ $(document).ready(function() {
         var id = trow.attr("id").replace("issue-", "");
         // Use Ajax to query the progress of the given issue
         $.ajax({
-	       	url: "/redmine/issues/" + id + "/progress",
+            url: "<%=issues_path%>/" + id + "/progress",
     	    dataType: "json"
     	}).done(function(data) {
     		// Get the progress
