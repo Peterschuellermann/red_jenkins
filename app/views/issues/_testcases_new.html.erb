@@ -12,8 +12,9 @@ end
 
 # This variable is used to build the testcase tree
 storedTestcase = {}
-# For each testcase t
-@testcases = Testcase.all
+
+#gets all testcases that are associated with the project the issue is related to.
+@testcases = Testcase.where(project_identifier: Project.find(@issue.project_id).identifier)
 @testcases.each do |t|
     # Check if the testcase has already been added to the issue (when editing)
     value = 'false'
