@@ -119,7 +119,7 @@ testcases.each do |t|
 		<tr>
 			<td colspan="2"><%= t.description %></td>
 			<td>
-				<input type="button" id="togglebutton" onclick="toggle(<%= @project.id %>, <%= t.id %>)" value="toggle status" class="togglebutton">
+				<input type="button" id="togglebutton" onclick="toggle('<%=project_path(@project)%>', <%= t.id %>)" value="toggle status" class="togglebutton">
 			</td>
         </tr>
 		<%

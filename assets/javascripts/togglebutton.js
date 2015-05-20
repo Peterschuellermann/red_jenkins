@@ -1,7 +1,7 @@
-function toggle(project, testcase) {
+function toggle(project_path, testcase) {
 
     $.ajax({
-        url: "/redmine/projects/" + project + "/testcases/" + testcase + "/toggle"
+        url: project_path + "/testcases/" + testcase + "/toggle"
     }).done(function(data) {
         $("#test_" + data.id).removeClass("passed").removeClass("failed").addClass(data.status.toLowerCase());
         $("#test_" + data.id).find("#status").html("/// " + data.status.toLowerCase() + " ///");
