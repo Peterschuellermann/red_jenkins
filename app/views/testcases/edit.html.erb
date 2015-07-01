@@ -9,7 +9,7 @@
 	  <p><%= f.text_field :name, :maxlength => 255, :required => true %></p>
 	  <%# Textfield for description %>
 	  <p>
- 		 <%= f.label_for_field :description, :required => true %>
+ 		 <%= f.label_for_field :description, :required => false %>
   		<%= content_tag 'span', :id => "testcase_description_and_toolbar" do %>
     		<%= f.text_area :description,
                    :cols => 60,
