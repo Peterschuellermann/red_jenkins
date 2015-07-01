@@ -1,3 +1,4 @@
 # English strings go here for Rails i18n
 en:
+  field_path: Assign an existing path or create a new one
   # my_label: "My label"
