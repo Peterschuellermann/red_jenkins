@@ -5,7 +5,7 @@ Redmine::Plugin.register :red_jenkins do
     name 'Red Jenkins plugin'
     author 'Peter Schüllermann'
     description 'This plugin includes Jenkins in Redmine'
-    version '1.0.2'
+    version '1.0.3'
     #url ''
     author_url 'https://github.com/Pepperrs/red_jenkins'
 
