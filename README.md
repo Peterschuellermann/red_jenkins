@@ -1,5 +1,5 @@
 # RedJenkins
-RedJenkins allows you to assign your project's testcases to issues in Redmine. It also allows you to create and run manual tests for your project in Redmine. For a more thorough explaination see [here](https://github.com/Pepperrs/red_jenkins/wiki/How-to-use-RedJenkins "HowTo").
+RedJenkins allows you to assign your project's testcases to issues in Redmine. It also allows you to create and run manual tests for your project in Redmine. For a more thorough explanation see [here](https://github.com/Pepperrs/red_jenkins/wiki/How-to-use-RedJenkins "HowTo").
 
 ## Installation
 
